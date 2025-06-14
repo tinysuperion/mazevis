@@ -1,0 +1,181 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.panel{
+
+  position: absolute;
+
+  /* border: 1px solid lightgrey; */
+  /* outline: 1px solid lightgrey; */
+  /* box-shadow: 0 0 2px 2px lightgrey inset; */
+
+  padding: 30px;
+  padding-top: 15px;
+  padding-bottom: 0px;
+
+  left: 0px;
+  top: 0px;
+  bottom: 0px;
+  width: 22%;
+
+}
+
+.algorithm{
+
+  box-sizing: content-box;
+
+}
+
+.option{
+
+  width: 100%;
+  height: 100%;
+
+}
+
+.graphic{
+
+  margin-left: 60px;
+
+  justify-content: center;
+  align-content: center;
+
+  display: grid;
+
+  position: absolute;
+  left: 22%;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+
+  background-color: rgb(30, 30, 33);
+
+
+}
+
+#height{
+
+  grid-template-columns: repeat(17, 5vh);
+  grid-template-rows: repeat(17, 5vh);
+}
+
+#width{
+
+  grid-template-columns: repeat(17, 5vw);
+  grid-template-rows: repeat(17, 5vw);
+
+}
+
+.tile{
+
+  border: 4px solid rgb(30, 30, 33);
+  text-align: center;
+  font-size: 12px;
+  padding: 0px;
+}
+
+.tileON{
+
+  background-color: rgb(69, 255, 199);
+
+}
+
+.tileALT{
+
+  background-color: rgb(73, 197, 255);
+}
+
+.marker{
+
+  background-color: rgb(255, 255, 100);
+}
+
+.left{
+
+  border-left-color: white;
+}
+
+.right{
+
+  border-right-color: white;
+}
+
+.top{
+
+  border-top-color: white;
+}
+
+.bottom{
+
+  border-bottom-color: white;
+}
+
+p {
+
+  text-align: left;
+
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+}
+
+button {
+  /* border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s; */
+  box-sizing: content-box;
+}
+
+.hoverable:hover{
+
+  border-color:#646cff;
+}
+/* 
+button:hover {
+  border-color: #646cff;
+} */
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
