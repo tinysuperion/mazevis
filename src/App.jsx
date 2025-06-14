@@ -1775,8 +1775,8 @@ function App() {
               difference = Math.ceil((lastPosition - position) / 17)
             }
 
-            console.log(Math.floor(position / newGrid.length), difference);
-            console.log(position % 17, ((lastPosition - position) % 17) / 2);
+            // console.log(Math.floor(position / newGrid.length), difference);
+            // console.log(position % 17, ((lastPosition - position) % 17) / 2);
 
             newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
             setState(newGrid.slice());
@@ -1786,9 +1786,7 @@ function App() {
             setState(newGrid.slice());
 
             lastPosition = position;
-            position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
-            await delay(100);
-
+            position = origins[Math.floor(position / newGrid.length)][position % newGrid.length];
             await delay(100);
 
           }, 100);
