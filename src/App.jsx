@@ -2,6 +2,8 @@ import { useState, useRef } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 
+//blah
+
 let emptyGrid = [];
 
 let tiles = new Array(17*17);
