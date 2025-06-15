@@ -760,8 +760,15 @@ function App() {
 
       for (let col = 0; col < 17; col+=2){
 
-        walls.push([row, col], [row+2, col]);
-        walls.push([row, col], [row, col+2]);
+        if (row != 16){
+
+          walls.push([[row, col], [row+2, col]]);
+        }
+
+        if (col != 16){
+
+          walls.push([[row, col], [row, col+2]]);
+        }
       }
     }
 
@@ -811,7 +818,12 @@ function App() {
 
       console.log(row, col);
 
-      if (row-2 >= 0 && newGrid[row-1][col] < 0){
+      if (newGrid[row][col] < 0){
+        // if a wall/tree already exists at this position nothing needs to be done sincee its already apart of it
+        // im not sure if this is best practice but it works and its not hard to look at
+      }
+
+      else if (row-2 >= 0 && newGrid[row-1][col] < 0){
 
         newGrid[row][col] = newGrid[row-2][col];
 
@@ -879,147 +891,11 @@ function App() {
       // newGrid[row][col] = 1;
       setState(newGrid.slice());
 
-      await delay(50);
+      await delay(100);
 
-      // available.splice(available.indexOf(row*17 + col), 1);
-
-      // let index = Math.round(Math.random() * (available.length-1));
-
-      // let destinationRow = Math.floor(available[index] / 17);
-      // let destinationCol = available[index] % 17;
-
-      // let directionRow = 0;
-      // let directionCol = 0;
-
-      // if (Math.round(Math.random()) == 1){
-
-      //   directionRow = directions[Math.round(Math.random())];
-      // }
-      // else{
-
-      //   directionCol = directions[Math.round(Math.random())];
-      // }
-
-      // if (((row - 2) < 0 || newGrid[row - 2][col] == newGrid[row][col]) && ((row + 2) >= newGrid.length || newGrid[row + 2][col] == newGrid[row][col]) && ((col - 2) < 0 || newGrid[row][col-2] == newGrid[row][col]) && ((col + 2) >= newGrid.length || newGrid[row][col+2] == newGrid[row][col])){
-
-      //   // check if there is no where to go, if there is swap one of the edges and check for an available space there in order for the
-      //   // maze to be connected
-
-      //   let promise = new Promise(async (resolve)=>{
-
-      //     console.log("stuck at ", row, col);
-
-      //     const boundsCheck = setInterval(()=>{
-
-      //       // choose random direction, check for validity 
-
-
-      //       // replace this with recursion, that or something thats iterative but does the same thing of searching 
-      //       // absolutely everywhere, like dfs except not randomized, im not doing that now
-
-      //       // if ((row + directionRow) >= 0 &&  (row + directionRow) < newGrid.length && (col + directionCol) >= 0 && (col + directionCol) < newGrid.length && (((row + directionRow - 2) >= 0 && newGrid[row + directionRow - 2][col + directionCol] != newGrid[row][col]) || ((row + directionRow + 2) < newGrid.length && newGrid[row + directionRow + 2][col + directionCol] != newGrid[row][col]) || ((col + directionCol - 2) >= 0 && newGrid[row + directionRow][col + directionCol - 2] != newGrid[row][col]) || ((col + directionCol + 2) < newGrid.length && newGrid[row + directionRow][col + directionCol + 2] != newGrid[row][col]))){
-
-      //       //   // check whether from this direction there is a valid direction (if it isnt the same maze or doesnt go out of bounds)
-      //       //   // (also if this direction is valid in the first place)
-
-      //       //   console.log("got direction");
-
-      //       //   // clearInterval(boundsCheck);
-
-      //       //   row += directionRow;
-      //       //   col += directionCol;
-
-      //       //   // now just choose random directions until it works out
-
-      //       //   // you could combine this entire statement with the else if below, however that looks terrible, its more organized this way
-      //       //   // even if it does repeat code
-
-      //       // }
-
-      //       // if ((row + directionRow) >= 0 && (row + directionRow) < newGrid.length && (col + directionCol) >= 0 && (col + directionCol) < newGrid.length && newGrid[row + directionRow][col + directionCol] != newGrid[row][col]){
-
-      //       //   console.log("unstuck");
-
-      //       //   clearInterval(boundsCheck);
-      //       //   resolve();
-      //       //   return;
-      //       // }
-
-
-      //       // if (Math.round(Math.random()) < 1){
-    
-      //       //   directionRow = direction[Math.round(Math.random())];
-      //       //   directionCol = 0;
-      //       // }
-      //       // else{
-        
-      //       //   directionCol = direction[Math.round(Math.random())];
-      //       //   directionRow = 0;
-      //       // }
-
-      //     },100);
-
-      //   })
-
-      //   await promise;
-      // }
-
-      // if ((row + directionRow) < 0 || (row + directionRow) >= newGrid.length || (col + directionCol) < 0 || (col + directionCol) >= newGrid.length || newGrid[row + directionRow][col + directionCol] == newGrid[row][col]){
-
-      //   console.log(row, col, directionRow, directionCol);
-
-      //   console.log("bounds check");
-
-      //   // theres an issue where it basically closes in on a tile when
-      //   // 2 trees combine and that tile now has no where to go because everything surrounding it just turned into
-      //   // the same tree, which is good since it wont form a loop, but in this situation it literally cant go anywhere
-      //   // and so the function is stuck at a bounds check, here my only solution is just 
-      //   // setting row to one of its neighbors and trying to expand outwards as if it were connected to instead, in other words
-      //   // reversing the connection or edge to prevent being stuck like this, not doing this now though
-
-      //   let promise = new Promise(async (resolve)=>{
-          
-      //     // console.log(`bounds check position ${row}, ${col} to ${row + directionRow}, ${col + directionCol}`);
-
-      //     // await new Promise ((resolve)=>{
-
-      //     //   setTimeout(() => {resolve()}, 3000);
-      //     // })
-
-      //     const boundsCheck = setInterval(async ()=>{
-
-      //       if (!((row + directionRow) < 0 || (row + directionRow) >= newGrid.length || (col + directionCol) < 0 || (col + directionCol) >= newGrid.length || newGrid[row + directionRow][col + directionCol] == newGrid[row][col])){
-
-      //         console.log("finish bounds check");
-
-      //         clearInterval(boundsCheck);
-      //         resolve();
-
-      //         return;
-      //       }
-  
-      //       if (Math.round(Math.random()) < 1){
-    
-      //         directionRow = direction[Math.round(Math.random())];
-      //         directionCol = 0;
-      //       }
-      //       else{
-        
-      //         directionCol = direction[Math.round(Math.random())];
-      //         directionRow = 0;
-      //       }
-  
-      //     },0);
-
-      //   })
-
-      //   await promise;
-      // }
-
-      // if (newGrid[row + directionRow][col + directionCol] != 0){
-
-      if (newGrid[row][col] == newGrid[destinationRow][col]){
+      if (newGrid[row][col] == newGrid[destinationRow][destinationCol]){
         // choose a new wall
+        console.log("new wall");
         running = false;
         return;
       }
@@ -1045,7 +921,8 @@ function App() {
         // newGrid[row + directionRow/2][col + directionCol/2] = newGrid[row + directionRow][col + directionCol];
         newGrid[row + (destinationRow - row)/2][col + (destinationCol - col)/2] = newGrid[destinationRow][destinationCol];
 
-        let copy = trees.get(newGrid[row + directionRow][col+directionCol]);
+        let copy = trees.get(newGrid[destinationRow][destinationCol]);
+        console.log(destinationRow, destinationCol, copy);
 
         for (const position of tree){
 
@@ -1055,6 +932,7 @@ function App() {
           console.log(position, row_, col_, row, col);
 
           newGrid[row_][col_] = newGrid[destinationRow][destinationCol];
+          // doesnt connect to eachother, just the vertex/node/tile/whatever
 
           copy.push(position);
         }
@@ -1068,26 +946,32 @@ function App() {
       }
       else{
 
-        newGrid[row + directionRow/2][col + directionCol/2] = newGrid[row][col];
+        console.log("empty");
+
+        let copy = trees.get(newGrid[row][col]);
+        copy.push(destinationRow * 17 + destinationCol);
+        trees.set(newGrid[row][col], copy);
+
+        newGrid[row + (destinationRow - row)/2][col + (destinationCol - col)/2] = newGrid[row][col];
         setState(newGrid.slice());
 
         await delay(50);
 
-        newGrid[row + directionRow][col + directionCol] = newGrid[row][col];
+        newGrid[destinationRow][destinationCol] = newGrid[row][col];
         setState(newGrid.slice());
 
-        await delay(50);
+        await delay(100);
       }
 
-      index = Math.round(Math.random() * (available.length-1));
+      // index = Math.round(Math.random() * (available.length-1));
 
-      row = Math.floor(available[index] / 17);
-      col = available[index] % 17;
+      // row = Math.floor(available[index] / 17);
+      // col = available[index] % 17;
       // select new valid starting point
 
       running = false;
 
-    },500)
+    },1000)
 
     })
 
