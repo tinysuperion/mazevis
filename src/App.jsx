@@ -192,6 +192,8 @@ let running = false;
 
 let displayNum = false;
 
+let delayTime = 50;
+
 function App() {
 
   const [grid, setState] = useState(emptyGrid);
@@ -222,7 +224,7 @@ function App() {
 
     return new Promise((resolve)=>{
 
-      if (skip){
+      if (skip || time == 0){
 
         resolve();
         return;
@@ -254,6 +256,20 @@ function App() {
     // weirdly const just means it cant be reassigned to a new array and i guess you cant alter size
     // you can still alter the elements within it
 
+    const newGrid = grid;
+    // weirdly const just means it cant be reassigned to a new array (or mess with memory in general) and i guess you cant alter size
+    // you can still alter the elements within it
+
+    for (let row = 0; row < newGrid.length; row++){
+
+      for (let col = 0; col < newGrid.length; col++){
+
+        newGrid[row][col] = 0;
+      }
+    }
+
+    setState(newGrid.slice());
+
     return new Promise((done)=>{
 
     const mainInterval = setInterval(async ()=>{
@@ -271,10 +287,6 @@ function App() {
       // so the website has some time to itself i guess, i was wondering why it didnt work, it was just because
       // of the loop in general
   
-      const newGrid = grid;
-      // weirdly const just means it cant be reassigned to a new array and i guess you cant alter size
-      // you can still alter the elements within it
-  
       let directionRow = 0;
       let directionCol = 0;
 
@@ -288,7 +300,7 @@ function App() {
       //   setTimeout(() => {resolve()}, 50);
       // })
 
-      await delay(50);
+      await delay(delayTime);
   
       if (Math.round(Math.random()) < 1){
   
@@ -306,7 +318,16 @@ function App() {
         // dead end, backtrack, or more like go back through a queue, not using recursion even though it could do all this
         // simply due to how expensive it is which is why its one of the leading causes of a stack overflow
 
+        let debounce = false;
+
         const backtrack = setInterval(async ()=>{
+
+          if (debounce){
+
+            return;
+          }
+
+          debounce = true;
 
           newGrid[row][col] = 2;
           setState(newGrid.slice());
@@ -319,8 +340,12 @@ function App() {
             // next iteration will use the value it ended off at, no promise needed
 
             newGrid[lastRow + (row - lastRow)/2][lastCol + (col - lastCol)/2] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
+
             newGrid[row][col] = 2;
             setState(newGrid.slice());
+            await delay(delayTime);
 
             // console.log(`finished backtrack at ${row}, ${col}`);
 
@@ -340,11 +365,6 @@ function App() {
             return;
           }
 
-          // await new Promise ((resolve)=>{
-
-          //   setTimeout(() => {resolve()}, 3000);
-          // })
-
           lastRow = row;
           lastCol = col;
   
@@ -352,12 +372,18 @@ function App() {
           col = path[path.length-1][1];
 
           newGrid[lastRow + (row - lastRow)/2][lastCol + (col - lastCol)/2] = 2;
+          setState(newGrid.slice());
+          await delay(delayTime)
+
           newGrid[row][col] = 2;
           setState(newGrid.slice());
+          await delay(delayTime);
 
           // console.log(`backtrack, ${grid[row][col]}`);
   
           path.pop();
+
+          debounce = false;
 
         }, 0);
 
@@ -378,14 +404,16 @@ function App() {
 
         let promise = new Promise(async (resolve)=>{
           
-          // console.log(`bounds check position ${row}, ${col} to ${row + directionRow}, ${col + directionCol}`);
-
-          // await new Promise ((resolve)=>{
-
-          //   setTimeout(() => {resolve()}, 3000);
-          // })
+          let debounce = false;
 
           const boundsCheck = setInterval(async ()=>{
+
+            if (debounce){
+
+              return;
+            }
+
+            debounce = true;
 
             if (!((row + directionRow) < 0 || (row + directionRow) >= newGrid.length || (col + directionCol) < 0 || (col + directionCol) >= newGrid.length || newGrid[row + directionRow][col + directionCol] >= 1)){
 
@@ -406,6 +434,8 @@ function App() {
               directionCol = direction[Math.round(Math.random())];
               directionRow = 0;
             }
+
+            debounce = false;
   
           },0);
 
@@ -424,7 +454,7 @@ function App() {
       newGrid[row + directionRow/2][col + directionCol/2] = 1;
       setState(newGrid.slice());
 
-      await delay(50);
+      await delay(delayTime);
 
       path.push([row, col]);
 
@@ -457,14 +487,6 @@ function App() {
 
   function AldousBroder(looping){
 
-    // usually row and col would be in the parameters but because
-    // i want to implement manual control of when to continue and going back through iterations
-    // so i need global variables
-
-    // for some reason goes in random directions and goes through tiles???
-
-    // console.log("start");
-
     let available = [];
 
     for (let row = 0; row < 17; row+=2){
@@ -473,8 +495,21 @@ function App() {
 
         available.push(row*17 + col);
       }
-
     }
+
+    const newGrid = grid;
+
+    // clear
+
+    for (let row = 0; row < newGrid.length; row++){
+
+      for (let col = 0; col < newGrid.length; col++){
+
+        newGrid[row][col] = 0;
+      }
+    }
+
+    setState(newGrid.slice());
 
     let lastRow = -1;
     let lastCol = -1;
@@ -498,22 +533,18 @@ function App() {
 
       running = true;
   
-      const newGrid = grid;
-  
       let directionRow = 0;
       let directionCol = 0;
 
 
       newGrid[row][col] = 2;
       setState(newGrid.slice());
+      await delay(delayTime);
 
       if (lastRow != -1){
 
         newGrid[lastRow][lastCol] = 1;
         setState(newGrid.slice());
-
-
-        console.log(lastRow, lastCol);
       }
 
 
@@ -531,8 +562,6 @@ function App() {
         done();
         return;
       }
-
-      await delay(50);
   
       if (Math.round(Math.random()) < 1){
   
@@ -560,7 +589,16 @@ function App() {
           //   setTimeout(() => {resolve()}, 3000);
           // })
 
+          let debounce = false;
+
           const boundsCheck = setInterval(async ()=>{
+
+            if (debounce == true){
+
+              return;
+            }
+
+            debounce = true;
 
             if (!((row + directionRow) < 0 || (row + directionRow) >= newGrid.length || (col + directionCol) < 0 || (col + directionCol) >= newGrid.length)){
 
@@ -581,6 +619,8 @@ function App() {
               directionCol = direction[Math.round(Math.random())];
               directionRow = 0;
             }
+
+            debounce = false;
   
           },0);
 
@@ -602,7 +642,7 @@ function App() {
         setState(newGrid.slice());
       }
 
-      await delay(50);
+      await delay(delayTime);
 
       lastRow = row;
       lastCol = col;
@@ -651,6 +691,18 @@ function App() {
     const newGrid = grid;
     const minHeap = new heap();
 
+    // clear
+
+    for (let row = 0; row < newGrid.length; row++){
+
+      for (let col = 0; col < newGrid.length; col++){
+
+        newGrid[row][col] = 0;
+      }
+    }
+
+    setState(newGrid.slice());
+
     return new Promise((done)=>{
 
     const mainInterval = setInterval(async ()=>{
@@ -664,8 +716,7 @@ function App() {
 
       newGrid[row][col] = 1;
       setState(newGrid.slice());
-
-      await delay(50);
+      await delay(delayTime);
 
       if (row-2 >= 0 && newGrid[row-2][col] == 0){
 
@@ -694,7 +745,16 @@ function App() {
 
       const boundsCheck = new Promise((resolve)=>{
 
+        let debounce = false;
+
         const validCheck = setInterval(async () => {
+
+          if (debounce){
+
+            return;
+          }
+
+          debounce = true;
           
           const minimum = minHeap.top();
 
@@ -711,8 +771,7 @@ function App() {
 
             newGrid[origin[0] + (destination[0] - origin[0])/2][origin[1] + (destination[1] - origin[1])/2] = 1;
             setState(newGrid.slice());
-
-            await delay(50);
+            await delay(delayTime);
 
             row = destination[0];
             col = destination[1];
@@ -733,11 +792,11 @@ function App() {
             return;
           }
 
-        });
+          debounce = false;
 
-        // running = false;
+        }, 0);
 
-      },60);
+      },0);
 
       await boundsCheck;
 
@@ -752,29 +811,34 @@ function App() {
 
     // basically just copy and paste prims but contain an array of all possible cells like wilson and alder
 
-    let walls = [];
+    const newGrid = grid;
 
+    let walls = [];
     let trees = new Map;
 
-    for (let row = 0; row < 17; row+=2){
+    for (let row = 0; row < 17; row++){
 
-      for (let col = 0; col < 17; col+=2){
+      for (let col = 0; col < 17; col++){
 
-        if (row != 16){
+        if (row % 2 == 0 && col % 2 == 0){
 
-          walls.push([[row, col], [row+2, col]]);
+          if (row != 16){
+
+            walls.push([[row, col], [row+2, col]]);
+          }
+
+          if (col != 16){
+
+            walls.push([[row, col], [row, col+2]]);
+          }
+
         }
 
-        if (col != 16){
-
-          walls.push([[row, col], [row, col+2]]);
-        }
+        newGrid[row][col] = 0; // just to clear the grid
       }
     }
 
-    const newGrid = grid;
-
-    // const directions = [-2,2];
+    setState(newGrid.slice());
 
     let running = false;
 
@@ -891,7 +955,7 @@ function App() {
       // newGrid[row][col] = 1;
       setState(newGrid.slice());
 
-      await delay(100);
+      await delay(delayTime);
 
       if (newGrid[row][col] == newGrid[destinationRow][destinationCol]){
         // choose a new wall
@@ -942,7 +1006,7 @@ function App() {
 
         setState(newGrid.slice());
 
-        await delay(100); 
+        await delay(delayTime); 
       }
       else{
 
@@ -955,12 +1019,12 @@ function App() {
         newGrid[row + (destinationRow - row)/2][col + (destinationCol - col)/2] = newGrid[row][col];
         setState(newGrid.slice());
 
-        await delay(50);
+        await delay(delayTime);
 
         newGrid[destinationRow][destinationCol] = newGrid[row][col];
         setState(newGrid.slice());
 
-        await delay(100);
+        await delay(delayTime);
       }
 
       // index = Math.round(Math.random() * (available.length-1));
@@ -971,7 +1035,7 @@ function App() {
 
       running = false;
 
-    },1000)
+    },0)
 
     })
 
@@ -996,6 +1060,16 @@ function App() {
     let path = [];
 
     const newGrid = grid;
+
+    // clear
+
+    for (let row = 0; row < newGrid.length; row++){
+
+      for (let col = 0; col < newGrid.length; col++){
+
+        newGrid[row][col] = 0;
+      }
+    }
 
     let index = Math.round(Math.random() * (cells.length-1));
 
@@ -1046,7 +1120,7 @@ function App() {
         return;
       }
 
-      console.log("start interval");
+      // console.log("start interval");
 
       running = true;
 
@@ -1057,14 +1131,14 @@ function App() {
 
       newGrid[row][col] = count;
       setState(newGrid.slice());
+      await delay(delayTime);
+
 
       cells.splice(cells.indexOf(row * 17 + col), 1);
 
       path.push(row * 17 + col);
 
-      console.log(newGrid[row][col]);
-
-      await delay(50);
+      // console.log(newGrid[row][col]);
   
       if (Math.round(Math.random()) < 1){
   
@@ -1079,7 +1153,7 @@ function App() {
 
         let promise = new Promise(async (resolve)=>{
           
-          console.log(`bounds check position ${row}, ${col} to ${row + directionRow}, ${col + directionCol}`);
+          // console.log(`bounds check position ${row}, ${col} to ${row + directionRow}, ${col + directionCol}`);
 
           // await new Promise ((resolve)=>{
 
@@ -1093,7 +1167,7 @@ function App() {
             // 3 checks here, check if this path starts a loop, check if it intersects another tile, and
             // generally check if where the path is going is in bounds
 
-            console.log("bounds check");
+            // console.log("bounds check");
 
             if (debounce == true){
 
@@ -1111,20 +1185,7 @@ function App() {
 
               debounce = true;
 
-              // const index = Math.round(Math.random() * (cells.length-1)/2) * 2;
-
-              // console.log(index);
-
-              // row = cells[Math.round(index / 34) * 2];
-              // col = cells[(index % 17)];
-
-              // let row_ = Math.floor(path[path.length-1] / 34) * 2;
-              // let col_ = path[path.length-1] % 17;
-
               console.log("erasing loop");
-
-              // console.log(row_, col_);
-              // console.log(path[path.length-1]);
 
               let lastRow = Math.floor(path[path.length-1] / 17);
               let lastCol = path[path.length-1] % 17;
@@ -1160,13 +1221,11 @@ function App() {
 
                     newGrid[row_ + (lastRow - row_)/2][col_ + (lastCol - col_)/2] = 0;
                     setState(newGrid.slice());
-
-                    // cells.push((row_ + (lastRow - row_)/2) * 17 + col_ + (lastCol - col_)/2);
-
-                    await delay(50);
+                    await delay(delayTime);
 
                     newGrid[row_][col_] = 0;
                     setState(newGrid.slice());
+                    await delay(delayTime);
 
                     cells.push(row_ * 17 + col_);
 
@@ -1191,7 +1250,7 @@ function App() {
                   clearInterval(eraseLoop);
                   resolve();
 
-                }, 50);
+                }, 0);
 
               })
 
@@ -1204,8 +1263,6 @@ function App() {
 
               return;
             }
-
-            // now just add a starting node and hope it works
 
             if (!((row + directionRow) < 0 || (row + directionRow) >= newGrid.length || (col + directionCol) < 0 || (col + directionCol) >= newGrid.length ||newGrid[row + directionRow][col + directionCol] == 0 || newGrid[row + directionRow][col + directionCol] == count)){
 
@@ -1249,38 +1306,19 @@ function App() {
               path.push(row * 17 + col);
 
               count++;
-
-
-              // i mustve forgotten to add a cell back, fix that later
               
-              console.log(cells.length, index, cells[index], row, col, count);
+              // console.log(cells.length, index, cells[index], row, col, count);
 
               newGrid[row][col] = count;
               setState(newGrid.slice());
-
-              // await new Promise((resolve)=>{
-              //   setTimeout(resolve);
-              // }, 50);
-
-              // running = false;
-              // wilsons(); 
-
-              // hope this works
-              // recursion is a hassle, change it later
-
-              // resolve();
-
-              // return;
             }
-
-            console.log(row + directionRow, col + directionCol);
 
             if (!((row + directionRow) < 0 || (row + directionRow) >= newGrid.length || (col + directionCol) < 0 || (col + directionCol) >= newGrid.length || newGrid[row + directionRow][col + directionCol] != 0)){
 
               clearInterval(boundsCheck);
               resolve();
 
-              console.log("continue");
+              // console.log("continue");
 
               return;
             }
@@ -1297,26 +1335,26 @@ function App() {
               directionRow = 0;
             }
 
-          },50);
+          },0);
         })
 
         await promise;
       }
 
-      console.log("connect?");
+      // console.log("connect?");
 
       newGrid[row + directionRow/2][col + directionCol/2] = count;
+      setState(newGrid.slice());
+      await delay(delayTime);
 
       // cells.splice((row + directionRow/2) * 17 + col + directionCol / 2);
 
       row += directionRow;
       col += directionCol;
 
-      setState(newGrid.slice());
-
       running = false;
 
-    },100);
+    },0);
 
     });
 
@@ -1376,6 +1414,8 @@ function App() {
     // let running = false;
     running = false;
 
+    return new Promise((done)=>{
+
     const mainInterval = setInterval(async () => {
 
       if (running || pause){
@@ -1384,14 +1424,6 @@ function App() {
       }
 
       running = true;
-
-      if (row == end[0] && col == end[1]){
-
-        console.log("path finished");
-
-        clearInterval(mainInterval);
-        return;
-      }
 
       let current = minHeap.top();
       minHeap.pop();
@@ -1415,16 +1447,13 @@ function App() {
 
         // let cost = Math.abs(start[0] - (row - 2)) + Math.abs(start[1] - col) + Math.abs(end[0] - (row - 2)) + Math.abs(end[1] - col);
         let cost = current[2] + 10 + Math.abs(end[0] - (row - 2)) * 5 + Math.abs(end[1] - col) * 5;
-        // costs[row-2][col] = cost;
-
-        // console.log(row-2, col, cost);
 
         minHeap.insert([cost, [row-2, col], current[2]+10]);
         origins[row-2][col] = row * grid.length + col;
 
         newGrid[row - 1][col] = current[2] + 5 + Math.abs(end[0] - (row - 1)) * 5 + Math.abs(end[1] - col) * 5;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
 
         // console.log(current[2] + 1 + Math.abs(end[0] - (row - 1)) + Math.abs(end[1] - col));
 
@@ -1437,11 +1466,21 @@ function App() {
           let position = origins[end[0]][end[1]];
           let lastPosition = end[0] * newGrid.length + end[1];
 
+          let debounce = false;
+
           const highlightPath = setInterval(async () => {
+
+            if (debounce){
+              
+              return;
+            }
+
+            debounce = true;
             
             if (position == -1){
 
               clearInterval(highlightPath);
+              done();
               return;
             }
 
@@ -1459,26 +1498,27 @@ function App() {
             // console.log(Math.floor(position / newGrid.length), difference);
             // console.log(position % 17, ((lastPosition - position) % 17) / 2);
 
-            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
-            setState(newGrid.slice());
-            await delay(100);
-
             newGrid[Math.floor(position / newGrid.length)][position % newGrid.length] = 2;
             setState(newGrid.slice());
+            await delay(delayTime);
+
+            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
 
             lastPosition = position;
-            position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
+            position = origins[Math.floor(position / newGrid.length)][position % newGrid.length];
 
-            await delay(100);
+            debounce = false;
 
-          }, 100);
+          }, 0);
 
           return;
         }
 
         newGrid[row-2][col] = cost;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
 
       }
 
@@ -1494,7 +1534,7 @@ function App() {
 
         newGrid[row+1][col] = current[2] + 5 + Math.abs(end[0] - (row + 1)) * 5 + Math.abs(end[1] - col) * 5;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
 
         if (row+2 == end[0] && col == end[1]){
 
@@ -1505,11 +1545,21 @@ function App() {
           let position = origins[end[0]][end[1]];
           let lastPosition = end[0] * newGrid.length + end[1];
 
+          let debounce = false;
+
           const highlightPath = setInterval(async () => {
+
+            if (debounce){
+
+              return;
+            }
+
+            debounce = true;
             
             if (position == -1){
 
               clearInterval(highlightPath);
+              done();
               return;
             }
 
@@ -1527,27 +1577,27 @@ function App() {
             console.log(Math.floor(position / newGrid.length), difference);
             console.log(position % 17, ((lastPosition - position) % 17) / 2);
 
-            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
-            setState(newGrid.slice());
-            await delay(100);
-
             newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
             setState(newGrid.slice());
+            await delay(delayTime);
+
+            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
 
             lastPosition = position;
             position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
-            await delay(100);
 
-          }, 100);
+            debounce = false;
+
+          }, 0);
 
           return;
         }
 
         newGrid[row+2][col] = cost;
         setState(newGrid.slice());
-
-        // console.log(row+2, col, newGrid[row+2][col]);
-        await delay(100);
+        await delay(delayTime);
       }
 
       if ((col - 2) >= 0 && grid[row][col-1] != 0 && (row != start[0] || (col-2) != start[1]) &&  (newGrid[row][col-2] == -1 || newGrid[row][col-2] > (current[2] + 10 + Math.abs(end[0] - row) * 5 + Math.abs(end[1] - (col - 2)) * 5))){
@@ -1562,7 +1612,7 @@ function App() {
 
         newGrid[row][col-1] =  current[2] + 5 + Math.abs(end[0] - row) * 5 + Math.abs(end[1] - (col - 1)) * 5;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
 
         if (row == end[0] && col-2 == end[1]){
 
@@ -1573,78 +1623,21 @@ function App() {
           let position = origins[end[0]][end[1]];
           let lastPosition = end[0] * newGrid.length + end[1];
 
-          const highlightPath = setInterval(async () => {
-            
-            if (position == -1){
+          let debounce = false;
 
-              clearInterval(highlightPath);
+          const highlightPath = setInterval(async () => {
+
+            if (debounce){
+
               return;
             }
 
-            let difference;
-
-            if (lastPosition - position > 0){
-
-              difference = Math.floor((lastPosition - position) / 17);
-            }
-            else{
-
-              difference = Math.ceil((lastPosition - position) / 17)
-            }
-
-            console.log(Math.floor(position / newGrid.length), difference);
-            console.log(position % 17, ((lastPosition - position) % 17) / 2);
-
-            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
-            setState(newGrid.slice());
-            await delay(100);
-
-            newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
-            setState(newGrid.slice());
-
-            lastPosition = position;
-            position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
-            await delay(100);
-
-            await delay(100);
-
-          }, 100);
-
-          return;
-        }
-     
-        newGrid[row][col-2] = cost;
-        setState(newGrid.slice());
-        await delay(100);
-      }
-
-      if ((col + 2) < newGrid.length && grid[row][col+1] != 0 && (row != start[0] || (col+2) != start[1]) &&  (newGrid[row][col+2] == -1 || newGrid[row][col+2] > (current[2] + 10 + Math.abs(end[0] - row) * 5 + Math.abs(end[1] -(col + 2)) * 5))){
-
-        // let cost = Math.abs(start[0] - row) + Math.abs(start[1] - (col + 2)) + Math.abs(end[0] - row) + Math.abs(end[1] - (col + 2));
-        let cost = current[2] + 10 + Math.abs(end[0] - row) * 5 + Math.abs(end[1] - (col + 2)) * 5;
-        // costs[row][col+2] = cost;
-
-        minHeap.insert([cost, [row, col+2], current[2]+10]);
-        origins[row][col+2] = row * grid.length + col;
-
-        newGrid[row][col+1] = current[2] + 5 + Math.abs(end[0] - row) * 5+ Math.abs(end[1] - (col + 1)) * 5;
-        setState(newGrid.slice());
-        await delay(100);
-
-        if (row == end[0] && col+2 == end[1]){
-
-          console.log("path finished");
-
-          clearInterval(mainInterval);
-
-          let position = origins[end[0]][end[1]];
-          let lastPosition = end[0] * newGrid.length + end[1];
-
-          const highlightPath = setInterval(async () => {
+            debounce = true;
             
             if (position == -1){
 
               clearInterval(highlightPath);
+              done();
               return;
             }
 
@@ -1662,30 +1655,111 @@ function App() {
             // console.log(Math.floor(position / newGrid.length), difference);
             // console.log(position % 17, ((lastPosition - position) % 17) / 2);
 
-            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
-            setState(newGrid.slice());
-            await delay(100);
-
             newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
             setState(newGrid.slice());
+            await delay(delayTime);
+
+            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
 
             lastPosition = position;
             position = origins[Math.floor(position / newGrid.length)][position % newGrid.length];
-            await delay(100);
 
-          }, 100);
+            debounce = false;
+
+          }, 0);
+
+          return;
+        }
+     
+        newGrid[row][col-2] = cost;
+        setState(newGrid.slice());
+        await delay(delayTime);
+      }
+
+      if ((col + 2) < newGrid.length && grid[row][col+1] != 0 && (row != start[0] || (col+2) != start[1]) &&  (newGrid[row][col+2] == -1 || newGrid[row][col+2] > (current[2] + 10 + Math.abs(end[0] - row) * 5 + Math.abs(end[1] -(col + 2)) * 5))){
+
+        // let cost = Math.abs(start[0] - row) + Math.abs(start[1] - (col + 2)) + Math.abs(end[0] - row) + Math.abs(end[1] - (col + 2));
+        let cost = current[2] + 10 + Math.abs(end[0] - row) * 5 + Math.abs(end[1] - (col + 2)) * 5;
+        // costs[row][col+2] = cost;
+
+        minHeap.insert([cost, [row, col+2], current[2]+10]);
+        origins[row][col+2] = row * grid.length + col;
+
+        newGrid[row][col+1] = current[2] + 5 + Math.abs(end[0] - row) * 5+ Math.abs(end[1] - (col + 1)) * 5;
+        setState(newGrid.slice());
+        await delay(delayTime);
+
+        if (row == end[0] && col+2 == end[1]){
+
+          console.log("path finished");
+
+          clearInterval(mainInterval);
+
+          let position = origins[end[0]][end[1]];
+          let lastPosition = end[0] * newGrid.length + end[1];
+
+          let debounce = false;
+
+          const highlightPath = setInterval(async () => {
+
+            if (debounce){
+
+              return;
+            }
+
+            debounce = true;
+            
+            if (position == -1){
+
+              clearInterval(highlightPath);
+              done();
+              return;
+            }
+
+            let difference;
+
+            if (lastPosition - position > 0){
+
+              difference = Math.floor((lastPosition - position) / 17);
+            }
+            else{
+
+              difference = Math.ceil((lastPosition - position) / 17)
+            }
+
+            // console.log(Math.floor(position / newGrid.length), difference);
+            // console.log(position % 17, ((lastPosition - position) % 17) / 2);
+
+            newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
+
+            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
+
+            lastPosition = position;
+            position = origins[Math.floor(position / newGrid.length)][position % newGrid.length];
+
+            debounce = false;
+
+          }, 0);
 
           return;
         }
 
         newGrid[row][col+2] = cost;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
       }
 
       running = false;
 
-    }, 100);
+    }, 0);   
+
+    });
   }
 
   function dijkstras(){
@@ -1738,13 +1812,11 @@ function App() {
     // theres no need to store g cost, just use costs since the cost is just the distance from the start now
     // tweak that later 
 
+    return new Promise((done)=>{
+
     const mainInterval = setInterval(async () => {
 
-      console.log("this??");
-
       if (running || pause){
-
-        console.log("running");
 
         return;
       }
@@ -1788,7 +1860,7 @@ function App() {
 
         newGrid[row - 1][col] = current[0] + 5;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
 
         // console.log(current[2] + 1 + Math.abs(end[0] - (row - 1)) + Math.abs(end[1] - col));
 
@@ -1801,11 +1873,21 @@ function App() {
           let position = origins[end[0]][end[1]];
           let lastPosition = end[0] * newGrid.length + end[1];
 
+          let debounce = false;
+
           const highlightPath = setInterval(async () => {
+
+            if (debounce){
+
+              return;
+            }
+
+            debounce = true;
             
             if (position == -1){
 
               clearInterval(highlightPath);
+              done();
               return;
             }
 
@@ -1820,28 +1902,27 @@ function App() {
               difference = Math.ceil((lastPosition - position) / 17)
             }
 
-            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
-            setState(newGrid.slice());
-            await delay(100);
-
-            lastPosition = position;
-            position = origins[Math.floor(position / newGrid.length)][position % newGrid.length];
-
             newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
             setState(newGrid.slice());
 
+            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
+
             lastPosition = position;
             position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
-            await delay(100);
+            // await delay(delayTime);
 
-          }, 100);
+            debounce = false;
+
+          }, 0);
 
           return;
         }
 
         newGrid[row-2][col] = cost;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
 
       }
 
@@ -1855,7 +1936,7 @@ function App() {
 
         newGrid[row+1][col] = current[0] + 5;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
 
         if (row+2 == end[0] && col == end[1]){
 
@@ -1866,11 +1947,21 @@ function App() {
           let position = origins[end[0]][end[1]];
           let lastPosition = end[0] * newGrid.length + end[1];
 
+          let debounce = false;
+
           const highlightPath = setInterval(async () => {
+
+            if (debounce){
+
+              return;
+            }
+
+            debounce = true;
             
             if (position == -1){
 
               clearInterval(highlightPath);
+              done();
               return;
             }
 
@@ -1885,25 +1976,27 @@ function App() {
               difference = Math.ceil((lastPosition - position) / 17)
             }
 
-            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
-            setState(newGrid.slice());
-            await delay(100);
-
             newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
             setState(newGrid.slice());
 
+            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
+
             lastPosition = position;
             position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
-            await delay(100);
+            // await delay(delayTime);
 
-          }, 100);
+            debounce = false;
+
+          }, 0);
 
           return;
         }
 
         newGrid[row+2][col] = cost;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
       }
 
       if ((col - 2) >= 0 && grid[row][col-1] != 0 && (row != start[0] || col-2 != start[1]) &&  (newGrid[row][col-2] == -1 || newGrid[row][col-2] > (current[0] + 10))){
@@ -1916,7 +2009,7 @@ function App() {
 
         newGrid[row][col-1] =  current[0] + 5;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
 
         if (row == end[0] && col-2 == end[1]){
 
@@ -1927,11 +2020,21 @@ function App() {
           let position = origins[end[0]][end[1]];
           let lastPosition = end[0] * newGrid.length + end[1];
 
+          let debounce = false;
+
           const highlightPath = setInterval(async () => {
+
+            if (debounce){
+
+              return;
+            }
+
+            debounce = true;
             
             if (position == -1){
 
               clearInterval(highlightPath);
+              done();
               return;
             }
 
@@ -1946,27 +2049,27 @@ function App() {
               difference = Math.ceil((lastPosition - position) / 17)
             }
 
-            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
-            setState(newGrid.slice());
-            await delay(100);
-
             newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
             setState(newGrid.slice());
 
+            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
+
             lastPosition = position;
             position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
-            await delay(100);
+            // await delay(delayTime);
 
-            await delay(100);
+            debounce = false;
 
-          }, 100);
+          }, 0);
 
           return;
         }
      
         newGrid[row][col-2] = cost;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
       }
 
       if ((col + 2) < newGrid.length && grid[row][col+1] != 0 &&(row != start[0] || col+2 != start[1]) &&  (newGrid[row][col+2] == -1 || newGrid[row][col+2] > (current[0] + 10))){
@@ -1979,7 +2082,7 @@ function App() {
 
         newGrid[row][col+1] = current[0] + 5;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
 
         if (row == end[0] && col+2 == end[1]){
 
@@ -1990,11 +2093,21 @@ function App() {
           let position = origins[end[0]][end[1]];
           let lastPosition = end[0] * newGrid.length + end[1];
 
+          let debounce = false;
+
           const highlightPath = setInterval(async () => {
+
+            if (debounce){
+
+              return;
+            }
+
+            debounce = true;
             
             if (position == -1){
 
               clearInterval(highlightPath);
+              done();
               return;
             }
 
@@ -2009,34 +2122,42 @@ function App() {
               difference = Math.ceil((lastPosition - position) / 17)
             }
 
+            newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
+
             newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
             setState(newGrid.slice());
-            await delay(100);
+            await delay(delayTime);
 
             lastPosition = position;
             position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
 
-            if (position != -1){
-              // meaning its not the last vertex or node, meaning its not the start
-              newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
-              setState(newGrid.slice());
-            }
+            // if (position != -1){
+            //   // meaning its not the last vertex or node, meaning its not the start
+            //   newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
+            //   setState(newGrid.slice());
+            // }
 
-            await delay(100);
+            // await delay(delayTime);
 
-          }, 100);
+            debounce = false;
+
+          }, 0);
 
           return;
         }
 
         newGrid[row][col+2] = cost;
         setState(newGrid.slice());
-        await delay(100);
+        await delay(delayTime);
       }
 
       running = false;
 
-    }, 100);
+    }, 0);
+
+    });
 
   }
 
@@ -2080,6 +2201,8 @@ function App() {
 
     let previous = -1;
 
+    return new Promise((done)=>{
+
     const mainInterval = setInterval(async () => {
 
       if (running || pause){
@@ -2088,8 +2211,6 @@ function App() {
       }
 
       running = true;
-
-      console.log("new iteration");
 
       for (let row = 0; row < grid.length; row+=2){
 
@@ -2106,7 +2227,7 @@ function App() {
 
             newGrid[row-1][col] = newGrid[row][col] + 5;
             setState(newGrid.slice());
-            await delay(100);
+            await delay(delayTime);
 
             newGrid[row-2][col] = newGrid[row][col] + 10;
             // setState(newGrid.slice());
@@ -2115,8 +2236,7 @@ function App() {
 
             origins[row-2][col] = row * newGrid.length + col;
             setState(newGrid.slice());
-
-            await delay(100);
+            await delay(delayTime);
           }
 
           if (row+2 < newGrid.length && newGrid[row+1][col] != 0 && (newGrid[row+2][col] == -1 || newGrid[row+2][col] > newGrid[row][col] + 10)){
@@ -2125,7 +2245,7 @@ function App() {
 
             newGrid[row+1][col] = newGrid[row][col] + 5;
             setState(newGrid.slice());
-            await delay(100);
+            await delay(delayTime);
 
             newGrid[row+2][col] = newGrid[row][col] + 10;
             // setState(newGrid.slice());
@@ -2135,7 +2255,7 @@ function App() {
             origins[row+2][col] = row * newGrid.length + col;
             setState(newGrid.slice());
 
-            await delay(100);
+            await delay(delayTime);
           }
 
           if (col-2 >= 0 && newGrid[row][col-1] != 0 && (newGrid[row][col-2] == -1 || newGrid[row][col-2] > newGrid[row][col] + 10)){
@@ -2144,7 +2264,7 @@ function App() {
 
             newGrid[row][col-1] = newGrid[row][col] + 5;
             setState(newGrid.slice());
-            await delay(100);
+            await delay(delayTime);
 
             newGrid[row][col-2] = newGrid[row][col] + 10;
             // setState(newGrid.slice());
@@ -2154,7 +2274,7 @@ function App() {
             origins[row][col-2] = row * newGrid.length + col;
             setState(newGrid.slice());
 
-            await delay(100);
+            await delay(delayTime);
           }
 
           if (col+2 < newGrid.length && newGrid[row][col+1] != 0  && (newGrid[row][col+2] == -1 || newGrid[row][col+2] > newGrid[row][col] + 10)){
@@ -2163,7 +2283,7 @@ function App() {
 
             newGrid[row][col+1] = newGrid[row][col] + 5;
             setState(newGrid.slice());
-            await delay(100);
+            await delay(delayTime);
 
             newGrid[row][col+2] = newGrid[row][col] + 10;
             // setState(newGrid.slice());
@@ -2172,8 +2292,7 @@ function App() {
 
             origins[row][col+2] = row * newGrid.length + col;
             setState(newGrid.slice());
-
-            await delay(100);
+            await delay(delayTime);
           }
         }
       }
@@ -2190,7 +2309,16 @@ function App() {
 
         console.log(position);
 
+        let debounce = false;
+
         const highlightPath = setInterval(async () => {
+
+          if (debounce){
+
+            return;
+          }
+
+          debounce = true;
           
           if (position == -1){
 
@@ -2200,6 +2328,7 @@ function App() {
             setState(newGrid.slice());
 
             clearInterval(highlightPath);
+            done();
             return;
           }
 
@@ -2219,28 +2348,19 @@ function App() {
 
           newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
           setState(newGrid.slice());
-          await delay(100);
-
-          // if (position != start[0] * newGrid.length + start[1]){
-          //   // 
-
-          //   console.log(Math.floor(position / newGrid.length), position % newGrid.length, start[0], start[1]);
-          //   console.log(newGrid[start[0]][start[1]]);
-            
-          //   newGrid[Math.floor(position / newGrid.length)][position % newGrid.length] = 2;
-          //   setState(newGrid.slice());
-
-          //   console.log(newGrid[start[0]][start[1]]);
-          // }
+          await delay(delayTime);
 
           newGrid[Math.floor(position / newGrid.length)][position % newGrid.length] = 2;
+          setState(newGrid.slice());
+          await delay(delayTime);
+
 
           lastPosition = position;
-          position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
+          position = origins[Math.floor(position / newGrid.length)][position % newGrid.length];
 
-          await delay(100);
+          debounce = false;
 
-        }, 100);
+        }, 0);
 
 
         clearInterval(mainInterval);
@@ -2251,7 +2371,9 @@ function App() {
 
       running = false;
 
-    }, 100);
+    }, 0);
+
+    });
 
   }
 
@@ -2361,6 +2483,7 @@ function App() {
                 }
 
                 ongoing = false;
+                skip = false;
               }}>
                 start & stop
               </button>
@@ -2372,15 +2495,29 @@ function App() {
                 skip
               </button>
 
-              <button>
+              <button onClick={()=>{
+
+                let newGrid = grid;
+
+                for (let row = 0; row < newGrid.length; row++){
+
+                  for (let col = 0; col < newGrid.length; col++){
+
+                    if ((row != start[0] || col != start[1]) && (row != end[0] || col != end[1])){
+
+                      tiles[row * newGrid.length + col].current.textContent = "";
+                    }
+
+                    newGrid[row][col] = 0;
+                  }
+                }
+
+                setState(newGrid.slice());
+              }}>
                 reset
               </button>
 
             </div>
-
-            <p>delay</p>
-
-            <input type="range"/>
 
           </div>
 
@@ -2402,7 +2539,7 @@ function App() {
 
             <div className="controls">
 
-              <button onClick={()=>{
+              <button onClick={async ()=>{
 
                 console.log("test");
 
@@ -2434,30 +2571,58 @@ function App() {
 
                 if (selection == "a"){
 
-                  aStar();
+                  await aStar();
                 }
 
                 else if (selection == "dijkstras"){
 
-                  dijkstras();
+                  await dijkstras();
                 }
 
                 else if (selection == "bellman"){
 
-                  bellman();
+                  await bellman();
                 }
 
                 ongoing = false;
-
+                skip = false;
               }}>
                 start & stop
               </button>
 
-              <button>
+              <button onClick={()=>{
+
+                skip = true;
+              }}>
                 skip
               </button>
 
-              <button>
+              <button onClick={()=>{
+
+                const newGrid = grid;
+
+                for (let row = 0; row < newGrid.length; row++){
+
+                  for (let col = 0; col < newGrid.length; col++){
+
+                    if (newGrid[row][col] != 0){
+
+                      newGrid[row][col] = 1;
+                    }
+
+                    if ((row != start[0] || col != start[1]) && (row != end[0] || col != end[1])){
+
+                      tiles[row * newGrid.length + col].current.textContent = "";
+                    }
+
+                  }
+
+                }
+
+                setState(newGrid.slice());
+
+                displayNum = false;
+              }}>
                 reset
               </button>
 
@@ -2470,11 +2635,14 @@ function App() {
 
             </div>
 
-            <p>delay</p>
-
-            <input type="range"/>
-
           </div>
+
+          <p>delay</p>
+
+          <input className="slider" id="algorithmSlider" type="range" min="0" max="500" step="10" value="50" onInput={()=>{
+
+            delayTime = document.getElementById("algorithmSlider").value;
+          }}/>
  
         </div>
 
