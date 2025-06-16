@@ -507,7 +507,6 @@ function App() {
 
       newGrid[row][col] = 2;
       setState(newGrid.slice());
-      await delay(delayTime);
 
       if (lastRow != -1){
 
@@ -515,6 +514,7 @@ function App() {
         setState(newGrid.slice());
       }
 
+      await delay(delayTime);
 
       if (available.indexOf(row*17 + col) != -1){
 
@@ -618,25 +618,9 @@ function App() {
       row += directionRow;
       col += directionCol;
 
-      // for some reason not causing a rerender?????
-      // look here later im on break https://stackoverflow.com/questions/25937369/react-component-not-re-rendering-on-state-change
-      // looks like its because it doesnt work when setting by reference, it has to be to a value i guess?
-      // assigning it to a new array copies by reference so it needs to be sliced for a "shallow copy" which is just the value
-
-      if (!looping){
-
-        clearInterval(mainInterval);
-        done();
-      }
-
       running = false;
 
     }, 0);
-
-
-    // last things to do
-    // fix up bugs and anything that isnt working properly
-    // add gaps, fill in gaps
 
     })
 
@@ -2392,7 +2376,9 @@ function App() {
 
         {/* make scrollbox later */}
 
-        <p>mazevis<br/><br/>description</p>
+        <h1 id="title">MAZEVIS<br/></h1>
+
+        <p id="description">visualize maze generation and pathfinding algorithms</p>
 
         <hr/>
 
@@ -2404,7 +2390,7 @@ function App() {
 
             <p>algorithm</p>
 
-            <select id="mazeGeneration">
+            <select className="algorithmSelection" id="mazeGeneration">
 
               <option className="option" value="dfs">depth first search</option>
               <option className="option" value="prims">prims</option>
@@ -2418,11 +2404,24 @@ function App() {
 
             <div className="controls">
 
-              <button onClick={async ()=>{
+              <button className="control" id="mazeRun" onClick={async ()=>{
+
+                const run = document.getElementById("mazeRun");
+                run.textContent = "pause";
 
                 if (ongoing){
 
                   pause = !pause;
+
+                  if (pause){
+
+                    run.textContent = "start";
+                  }
+                  else{
+
+                    run.textContent = "pause";
+                  }
+
                   return;
                 }
 
@@ -2443,8 +2442,12 @@ function App() {
 
                   for (let col = 0; col < newGrid.length; col++){
 
+                    if ((row != start[0] || col != start[1]) && (row != end[0] || col != end[1])){
+
+                      tiles[row * newGrid.length + col].current.textContent = "";
+                    }
+
                     newGrid[row][col] = 0;
-                    tiles[row * newGrid.length + col].current.textContent = "";
                   }
                 }
 
@@ -2486,18 +2489,20 @@ function App() {
 
                 ongoing = false;
                 skip = false;
+
+                run.textContent = "start";
               }}>
-                start & stop
+                start
               </button>
 
-              <button onClick={()=>{
+              <button className="control" onClick={()=>{
 
                 skip = true;
               }}>
                 skip
               </button>
 
-              <button onClick={()=>{
+              <button className="control" onClick={()=>{
 
                 let newGrid = grid;
 
@@ -2529,7 +2534,7 @@ function App() {
 
             <p>algorithm</p>
 
-            <select id="pathGeneration">
+            <select className="algorithmSelection" id="pathGeneration">
 
               <option className="option" value="a" >a*</option>
               <option className="option" value="dijkstras">dijkstras</option>
@@ -2541,7 +2546,7 @@ function App() {
 
             <div className="controls">
 
-              <button onClick={async ()=>{
+              <button className="control" id="pathRun" onClick={async ()=>{
 
                 if (start == -1 || end == -1){
 
@@ -2550,14 +2555,27 @@ function App() {
                   return;
                 }
 
+                const run = document.getElementById("pathRun");
+                run.textContent = "pause";
+
                 if (ongoing){
 
                   console.log("going");
 
                   pause = !pause;
+
+                  if (pause){
+
+                    run.textContent = "start";
+                  }
+                  else{
+
+                    run.textContent = "pause";
+                  }
+
                   return;
                 }
-
+                
                 ongoing = true;
 
                 // clear grid
@@ -2567,6 +2585,11 @@ function App() {
                 for (let row = 0; row < newGrid.length; row++){
 
                   for (let col = 0; col < newGrid.length; col++){
+
+                    if ((row == start[0] && col == start[1]) || (row == end[0] && col == end[1])){
+
+                      continue;
+                    }
 
                     tiles[row * newGrid.length + col].current.textContent = "";
                   }
@@ -2596,18 +2619,20 @@ function App() {
 
                 ongoing = false;
                 skip = false;
+
+                run.textContent = "start";
               }}>
-                start & stop
+                start
               </button>
 
-              <button onClick={()=>{
+              <button className="control" id="pathSkip" onClick={()=>{
 
                 skip = true;
               }}>
                 skip
               </button>
 
-              <button onClick={()=>{
+              <button className="control" id="pathReset" onClick={()=>{
 
                 const newGrid = grid;
 
@@ -2632,11 +2657,12 @@ function App() {
                 setState(newGrid.slice());
 
                 displayNum = false;
+
               }}>
                 reset
               </button>
 
-              <button onClick={()=>{
+              <button className="control" id="set" onClick={()=>{
 
                 setting = "start";
               }}>
@@ -2647,11 +2673,11 @@ function App() {
 
           </div>
 
-          <p>delay</p>
+          <p id="delayHeading">delay</p>
 
-          <input className="slider" id="algorithmSlider" type="range" min="0" max="500" step="10" defaultValue="50" onInput={()=>{
+          <input className="slider" id="delaySlider" type="range" min="0" max="500" step="10" defaultValue="50" onInput={()=>{
 
-            const slider = document.getElementById("algorithmSlider");
+            const slider = document.getElementById("delaySlider");
 
             delayTime = slider.value;
             slider.value = slider.value;
