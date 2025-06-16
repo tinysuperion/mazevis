@@ -28,15 +28,8 @@ for (let row = 0; row < 17; row++){
 
 const direction = [-2, 2];
 
-let path = [];
-// in javascript to get rid of the first element its shift
-// and then just push, i miss my pops and push backs but i was basically just using c++
-// like any other language, i never got into its intracacies with memory allocation or weird syntax just enough to use it in general
-// like just using new when making an object and pointers for those objects or for dynamic references
-
 let row = Math.round(Math.random()*8) * 2;
 let col = Math.round(Math.random()*8) * 2;
-
 
 // i have to implement my own heap datastructure so wahtever
 
@@ -193,6 +186,7 @@ let running = false;
 let displayNum = false;
 
 let delayTime = 50;
+let selection = "";
 
 function App() {
 
@@ -235,7 +229,7 @@ function App() {
 
   }
   
-  function dfs(looping){
+  function dfs(){
 
     // usually row and col would be in the parameters but because
     // i want to implement manual control of when to continue and going back through iterations
@@ -252,6 +246,8 @@ function App() {
     let lastRow = -1;
     let lastCol = -1;
 
+    let path = [];
+
     // const newGrid = grid;
     // weirdly const just means it cant be reassigned to a new array and i guess you cant alter size
     // you can still alter the elements within it
@@ -259,16 +255,6 @@ function App() {
     const newGrid = grid;
     // weirdly const just means it cant be reassigned to a new array (or mess with memory in general) and i guess you cant alter size
     // you can still alter the elements within it
-
-    for (let row = 0; row < newGrid.length; row++){
-
-      for (let col = 0; col < newGrid.length; col++){
-
-        newGrid[row][col] = 0;
-      }
-    }
-
-    setState(newGrid.slice());
 
     return new Promise((done)=>{
 
@@ -466,12 +452,6 @@ function App() {
       // looks like its because it doesnt work when setting by reference, it has to be to a value i guess?
       // assigning it to a new array copies by reference so it needs to be sliced for a "shallow copy" which is just the value
 
-      if (!looping){
-
-        clearInterval(mainInterval);
-        done();
-      }
-
       running = false;
 
     }, 0);
@@ -485,7 +465,7 @@ function App() {
 
   }
 
-  function AldousBroder(looping){
+  function AldousBroder(){
 
     let available = [];
 
@@ -498,18 +478,6 @@ function App() {
     }
 
     const newGrid = grid;
-
-    // clear
-
-    for (let row = 0; row < newGrid.length; row++){
-
-      for (let col = 0; col < newGrid.length; col++){
-
-        newGrid[row][col] = 0;
-      }
-    }
-
-    setState(newGrid.slice());
 
     let lastRow = -1;
     let lastCol = -1;
@@ -691,18 +659,6 @@ function App() {
     const newGrid = grid;
     const minHeap = new heap();
 
-    // clear
-
-    for (let row = 0; row < newGrid.length; row++){
-
-      for (let col = 0; col < newGrid.length; col++){
-
-        newGrid[row][col] = 0;
-      }
-    }
-
-    setState(newGrid.slice());
-
     return new Promise((done)=>{
 
     const mainInterval = setInterval(async ()=>{
@@ -807,7 +763,7 @@ function App() {
     })
   }
 
-  function kruskals(looping){
+  function kruskals(){
 
     // basically just copy and paste prims but contain an array of all possible cells like wilson and alder
 
@@ -816,25 +772,20 @@ function App() {
     let walls = [];
     let trees = new Map;
 
-    for (let row = 0; row < 17; row++){
+    for (let row = 0; row < 17; row+=2){
 
-      for (let col = 0; col < 17; col++){
+      for (let col = 0; col < 17; col+=2){
 
-        if (row % 2 == 0 && col % 2 == 0){
+        if (row != 16){
 
-          if (row != 16){
-
-            walls.push([[row, col], [row+2, col]]);
-          }
-
-          if (col != 16){
-
-            walls.push([[row, col], [row, col+2]]);
-          }
-
+          walls.push([[row, col], [row+2, col]]);
         }
 
-        newGrid[row][col] = 0; // just to clear the grid
+        if (col != 16){
+
+          walls.push([[row, col], [row, col+2]]);
+        }
+
       }
     }
 
@@ -1060,16 +1011,6 @@ function App() {
     let path = [];
 
     const newGrid = grid;
-
-    // clear
-
-    for (let row = 0; row < newGrid.length; row++){
-
-      for (let col = 0; col < newGrid.length; col++){
-
-        newGrid[row][col] = 0;
-      }
-    }
 
     let index = Math.round(Math.random() * (cells.length-1));
 
@@ -1399,6 +1340,7 @@ function App() {
           // unitize
           newGrid[row][col] = -1;
         }
+
       }
 
       // costs.push(row_.slice());
@@ -2382,24 +2324,66 @@ function App() {
   // the problem was because of the set state which rerenders the page, that means this function runs again
   // and debounce must be redeclared resetting the timer
 
-  document.addEventListener("keydown", async (event)=>{
+  // manual progression below but ive decided to make it defunct, i dont think its needed just complicates
+  // the site with more controls
 
-    if (event.key == "ArrowRight" && !debounce){
+  // document.addEventListener("keydown", async (event)=>{
 
-      debounce = true
+  //   if (!pause){
 
-      await dfs(false);
+  //     return;
+  //   }
 
-      // this is sort of screwed up but whatever it works
+  //   if (event.key == "ArrowLeft" && !debounce){
 
-      console.log(debounce);
 
-      setTimeout(()=>{
-        debounce = false;
-      },250);
-    }
 
-  })
+  //   }
+
+  //   else if (event.key == "ArrowRight" && !debounce){
+
+  //     debounce = true
+
+  //     if (selection == "dfs"){
+
+  //       await dfs(false);
+  //     }
+  //     else if (selection == "prims"){
+
+  //       await prims(false);
+  //     }
+  //     else if (selection == "kruskals"){
+
+  //       await kruskals(false);
+  //     }
+  //     else if (selection == "wilsons"){
+
+  //       await wilsons(false);
+  //     }
+  //     else if (selection == "alder"){
+
+  //       await AldousBroder(false);
+  //     }
+
+  //     else if (selection == "a"){
+
+  //       await aStar(false);
+  //     }
+  //     else if (selection == "dijkstras"){
+
+  //       await dijkstras(false);
+  //     }
+  //     else if (selection == "bellman"){
+
+  //       await bellman(false);
+  //     }
+
+  //     setTimeout(()=>{
+  //       debounce = false;
+  //     },0);
+  //   }
+
+  // })
   
   return (
     <>
@@ -2444,42 +2428,60 @@ function App() {
 
                 ongoing = true;
 
-                const selection = document.getElementById("mazeGeneration").value;
+                selection = document.getElementById("mazeGeneration").value;
 
-                  row = Math.round(Math.random()*8) * 2;
-                  col = Math.round(Math.random()*8) * 2;
+                row = Math.round(Math.random()*8) * 2;
+                col = Math.round(Math.random()*8) * 2;
+
+                displayNum = false;
+
+                // clear grid
+
+                const newGrid = grid;
+
+                for (let row = 0; row < newGrid.length; row++){
+
+                  for (let col = 0; col < newGrid.length; col++){
+
+                    newGrid[row][col] = 0;
+                    tiles[row * newGrid.length + col].current.textContent = "";
+                  }
+                }
+
+                setState(newGrid.slice());
+                
 
                 if (selection == "dfs"){
                   
                   // row = Math.round(Math.random()*8) * 2;
                   // col = Math.round(Math.random()*8) * 2;
 
-                  await dfs(true);
+                  await dfs();
 
                   // dfs(Math.round(Math.random()*16), Math.round(Math.random()*16));
                 }
 
                 else if (selection == "prims"){
 
-                  await prims(true);
+                  await prims();
 
                 }
 
                 else if (selection == "wilsons"){
 
-                  await wilsons(true);
+                  await wilsons();
                 }
 
                 else if (selection == "alder"){
 
-                  await AldousBroder(true);
+                  await AldousBroder();
                 }
 
                 else if (selection == "kruskals"){
 
                   displayNum = true;
 
-                  await kruskals(true);
+                  await kruskals();
                 }
 
                 ongoing = false;
@@ -2541,8 +2543,6 @@ function App() {
 
               <button onClick={async ()=>{
 
-                console.log("test");
-
                 if (start == -1 || end == -1){
 
                   console.log("invalid");
@@ -2558,11 +2558,21 @@ function App() {
                   return;
                 }
 
-                console.log("pass");
-
                 ongoing = true;
 
-                const selection = document.getElementById("pathGeneration").value;
+                // clear grid
+
+                const newGrid = grid;
+
+                for (let row = 0; row < newGrid.length; row++){
+
+                  for (let col = 0; col < newGrid.length; col++){
+
+                    tiles[row * newGrid.length + col].current.textContent = "";
+                  }
+                }
+
+                selection = document.getElementById("pathGeneration").value;
 
                 row = Math.floor(start / grid.length);
                 col = start % grid.length;
@@ -2639,9 +2649,13 @@ function App() {
 
           <p>delay</p>
 
-          <input className="slider" id="algorithmSlider" type="range" min="0" max="500" step="10" value="50" onInput={()=>{
+          <input className="slider" id="algorithmSlider" type="range" min="0" max="500" step="10" defaultValue="50" onInput={()=>{
 
-            delayTime = document.getElementById("algorithmSlider").value;
+            const slider = document.getElementById("algorithmSlider");
+
+            delayTime = slider.value;
+            slider.value = slider.value;
+
           }}/>
  
         </div>
