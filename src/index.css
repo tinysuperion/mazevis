@@ -103,9 +103,53 @@
   margin-left: 16px;
 }
 
-#delaySlider{
+#sliderContainer{
+
+  position: relative;
 
   margin-left: 16px;
+  width: 80%;
+
+}
+
+#delaySlider{
+
+  /* margin-left: 16px;
+  width: 80%; */
+
+  position: absolute;
+
+  width: 100%;
+}
+
+#value{
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+#delaySlider:hover + #value{
+
+  /* opacity: 1; */
+
+  animation-name: fadein;
+  animation-timing-function: ease;
+  animation-duration: 0.7s;
+  animation-fill-mode: forwards;
+
+}
+
+@keyframes fadein{
+
+  from{
+
+    opacity: 0;
+  }
+  to{
+
+    opacity: 1;
+  }
+
 
 }
 

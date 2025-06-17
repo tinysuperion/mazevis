@@ -191,6 +191,7 @@ let selection = "";
 function App() {
 
   const [grid, setState] = useState(emptyGrid);
+  const [position, setPosition] = useState(40);
 
   const tileRef = useRef(new Array(17*17));
 
@@ -2575,7 +2576,7 @@ function App() {
 
                   return;
                 }
-                
+
                 ongoing = true;
 
                 // clear grid
@@ -2675,14 +2676,31 @@ function App() {
 
           <p id="delayHeading">delay</p>
 
-          <input className="slider" id="delaySlider" type="range" min="0" max="500" step="10" defaultValue="50" onInput={()=>{
+          <div id="sliderContainer">
 
-            const slider = document.getElementById("delaySlider");
+            <input className="slider" id="delaySlider" type="range" min="0" max="500" step="10" defaultValue="50" onInput={async ()=>{
 
-            delayTime = slider.value;
-            slider.value = slider.value;
+              const slider = document.getElementById("delaySlider");
 
-          }}/>
+              slider.classList.add("opaque");
+
+              delayTime = slider.value;
+
+              const size = slider.offsetWidth;
+
+              const value = document.getElementById("value");
+              value.textContent = delayTime
+              // value.style.opacity = 1;
+              // value.style.left = `${size * (value / 500)}px`;
+              setPosition(25 + size * (delayTime / 550));
+
+              console.log("size", size);
+
+            }}/>
+
+            <p id="value" style={{"position" : "absolute", "height" : `${15}px`,"fontSize" : `${14}px`, "left" :  position}}>50</p>
+
+          </div>
  
         </div>
 
