@@ -2409,8 +2409,11 @@ function App() {
                     
                     //   {fileContent}
                     // </p>
+                  <div>
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
 
-                    <a href=""></a>
+                    <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/dfs.jsx">implementation</a>
+                  </div>
                   )
                 }
 
@@ -2423,7 +2426,11 @@ function App() {
 
                   setCode(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>prims implementation</span> <br/><br/> copy and paste code</p>
+                    <div>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>prims implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/prims.jsx">implementation</a>
+                    </div>
                   )
 
                 }
@@ -2437,7 +2444,11 @@ function App() {
 
                   setCode(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>wilsons implementation</span> <br/><br/> copy and paste code</p>
+                    <div>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>wilsons implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/wilsons.jsx">implementation</a>
+                    </div>
                   )
 
                 }
@@ -2451,7 +2462,11 @@ function App() {
 
                   setCode(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>aldous-broder implementation</span> <br/><br/> copy and paste code</p>
+                    <div>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>aldous-broder implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/aldousBroder.jsx">implementation</a>
+                    </div>
                   )
 
                 }
@@ -2465,7 +2480,11 @@ function App() {
 
                   setCode(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>kruskals implementation</span> <br/><br/> copy and paste code</p>
+                  <div>
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>kruskals implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+
+                    <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/kruskals.jsx">implementation</a>
+                  </div>
                   )
 
                 } 
@@ -2626,7 +2645,11 @@ function App() {
 
                   setCode(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>a* implementation</span> <br/><br/> copy and paste code</p>
+                    <div>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>a* implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/aStar.jsx">implementation</a>
+                    </div>
                   )
 
                 }
@@ -2640,7 +2663,11 @@ function App() {
 
                   setCode(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dijkstras implementation</span> <br/><br/> copy and paste code</p>
+                    <div>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dijkstras implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/dijkstras.jsx">implementation</a>
+                    </div>
                   )
 
                 }
@@ -2654,7 +2681,11 @@ function App() {
 
                   setCode(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>bellman implementation</span> <br/><br/> copy and paste code</p>
+                    <div>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>bellman-ford implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/bellmanFord.jsx">implementation</a>
+                    </div>
                   )
 
                 }
