@@ -48,7 +48,6 @@ class heap{
 
     this.nodes = [];
     this.size = 0;
-    // i really dont need a size variable, but im not changing it right now
   }
 
   // to get a child at some index its just
@@ -190,7 +189,9 @@ function App() {
 
   const [grid, setState] = useState(emptyGrid);
   const [position, setPosition] = useState(40);
-  const [text, setText] = useState("");
+  const [text, setText] = useState();
+  const [code, setCode] = useState();
+  const [visibility, setVisibility] = useState();
 
   const tileRef = useRef(new Array(17*17));
 
@@ -247,10 +248,6 @@ function App() {
     let lastCol = -1;
 
     let path = [];
-
-    // const newGrid = grid;
-    // weirdly const just means it cant be reassigned to a new array and i guess you cant alter size
-    // you can still alter the elements within it
 
     const newGrid = grid;
     // weirdly const just means it cant be reassigned to a new array (or mess with memory in general) and i guess you cant alter size
@@ -976,25 +973,24 @@ function App() {
 
   }
 
-  let cells = [];
-
-  for (let row = 0; row < 17; row+=2){
-
-    for (let col = 0; col < 17; col+=2){
-
-      cells.push(row * 17 + col);
-    }
-  }
 
   function wilsons(){
 
     // basically dfs but start randomly and go until you hit another cell already in the maze, this makes it unbiased
 
-    let count = 3;
-
-    let path = [];
-
     const newGrid = grid;
+
+    let cells = [];
+
+    for (let row = 0; row < 17; row+=2){
+
+      for (let col = 0; col < 17; col+=2){
+
+        cells.push(row * 17 + col);
+      }
+    }
+
+    let count = 3;
 
     let index = Math.round(Math.random() * (cells.length-1));
 
@@ -1015,16 +1011,6 @@ function App() {
     row = Math.floor(cells[index] / 17);
     col = cells[index] % 17; 
 
-    // hopefully the above works but ill see
-
-    // next to do is merging and loop detection, which is really just incrementing a number
-    // but im lazy so
-
-    // pop cells already travelled to too
-
-    // maybe finished, im not testing though
-
-    // let running = false;
     running = false;
 
     return new Promise((done)=>{
@@ -2403,7 +2389,7 @@ function App() {
 
               </select>
 
-              <button className="infoButton" onClick={()=>{
+              <button className="infoButton" onClick={async ()=>{
 
                 const selection = document.getElementById("mazeGeneration").value;
 
@@ -2411,7 +2397,20 @@ function App() {
                  
                   setText(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search</span> <br/> from a randomly selected starting point a random neighboring tile is chosen, this step continues while saving each step in a stack until a deadend is reached when the algorithm backtracks until an available path is open at one of the previous steps. <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> depth-first search results in mazes with straight long halls and few branches </p>
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search</span> <br/> from a randomly selected starting point a random neighboring tile is chosen, this step continues while saving each step in a stack until a dead-end is reached when the algorithm backtracks until an available path is open at one of the previous steps. <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> depth-first search results in mazes with straight long halls and few branches </p>
+                  )
+
+                  setCode(
+
+                    // <p id="code" style={{"opacity" : visibility}}><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search implementation</span> <br/> copy and paste code</p>
+                    // isnt updated when done like this for some reason
+
+                    // <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search implementation</span> <br/><br/>
+                    
+                    //   {fileContent}
+                    // </p>
+
+                    <a href=""></a>
                   )
                 }
 
@@ -2421,6 +2420,12 @@ function App() {
 
                     <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>prims algorithm</span> <br/> prims selects a random tile to start. from the start all neighboring tiles are saved in an array and a random tile is chosen from all of the tiles available.<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> prims results in a minimal spanning tree, an edge-weighted tree that has no loops and has the minimum sum of edges (of course you dont have to assign all of the edges a weight, a random one can be selected for the same result for maze generation)</p>
                   )
+
+                  setCode(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>prims implementation</span> <br/><br/> copy and paste code</p>
+                  )
+
                 }
 
                 else if (selection == "wilsons"){
@@ -2429,6 +2434,12 @@ function App() {
 
                     <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>wilsons algorithm</span> <br/> wilsons algorithm makes use of a random walk starting from a random tile and starts with a randomly selected tile to be the initial maze. in the random walk it functions similarly to depth-first search until it forms a loop where it backtracks until it reaches the intersection ensuring it reaches the maze instead of blocking itself out. upon reaching a tile already in the maze it is added to the maze and a random walk begins at another randomly selected tile<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> wilsons algorithm results in a uniform distribution in mazes that isnt biased toward short dead ends or long corridors </p>
                   )
+
+                  setCode(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>wilsons implementation</span> <br/><br/> copy and paste code</p>
+                  )
+
                 }
 
                 else if (selection == "alder"){
@@ -2437,14 +2448,26 @@ function App() {
 
                     <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>aldous-broder algorithm</span> <br/> pick a random tile, then while there are unvisited tiles go to a random neighbor and if it hasn't yet been visited connect the two and continue at that neighbor. <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> aldous-broder results in one of the least efficient algorithms, however similarly to wilsons it also forms mazes that have a uniform distribution </p>
                   )
+
+                  setCode(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>aldous-broder implementation</span> <br/><br/> copy and paste code</p>
+                  )
+
                 }
 
                 else if (selection == "kruskals"){
 
                   setText(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>kruskals algorithm</span> <br/> kruskals algorithm contains a list of all of the walls in the maze (these walls are the connections between tiles). then the walls are selected in a random order, if the tiles the wall connect belong to separate trees they are connected, otherwise they form a loop and the wall is skipped<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> kruskals algorithm produces a minimal spanning tree and a maze almost identical to prims with frequent branches and short deadends along with unique generation</p>
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>kruskals algorithm</span> <br/> kruskals algorithm contains a list of all of the walls in the maze (these walls are the connections between tiles). then the walls are selected in a random order, if the tiles the wall connect belong to separate trees they are connected, otherwise they form a loop and the wall is skipped<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> kruskals algorithm produces a minimal spanning tree and a maze almost identical to prims with frequent branches and short dead-ends along with unique generation</p>
                   )
+
+                  setCode(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>kruskals implementation</span> <br/><br/> copy and paste code</p>
+                  )
+
                 } 
 
               }}>?</button>
@@ -2596,26 +2619,44 @@ function App() {
 
                 if (selection == "a"){
 
-                setText(
+                  setText(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>a*</span> <br/> a* uses a h cost representing the heuristic to guide and shear off routes by including an estimation of the distance to the end along with a g cost representing the distance traveled from the start. from the start the cost of all the neighboring tiles are calculated and the lowest cost is chosen to evaluate its neighbors, this continues until the end is found with the shortest path and it backtracks to the start <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> a* results in a quick algorithm to find the shortest path between some start and end goal by using a heuristic to cull unnecessary paths </p>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>a*</span> <br/> a* uses a h cost representing the heuristic to guide and shear off routes by including an estimation of the distance to the end along with a g cost representing the distance traveled from the start. from the start the cost of all the neighboring tiles are calculated and the lowest cost is chosen to evaluate its neighbors, this continues until the end is found with the shortest path and it backtracks to the start <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> a* results in a quick algorithm to find the shortest path between some start and end goal by using a heuristic to cull unnecessary paths </p>
+                    )
+
+                  setCode(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>a* implementation</span> <br/><br/> copy and paste code</p>
                   )
+
                 }
 
                 else if (selection == "dijkstras"){
 
-                setText(
+                  setText(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dijkstras</span> <br/> dijkstras algorithm similarly to a* uses a g cost representing the distance travelled, however dijkstras lacks any heuristic, the process followed is the same; evaluating the cost of neighboring tiles and choosing the lowest cost to evaluate more neighbors until the end is found and it backtracks through the lowest cost path to the start <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/>dijkstras provides a streamlined process to find the shortest path between the start and the end, however is slower than a* due to the lack of a heuristic to weed out unnecessary paths</p>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dijkstras</span> <br/> dijkstras algorithm similarly to a* uses a g cost representing the distance travelled, however dijkstras lacks any heuristic, the process followed is the same; evaluating the cost of neighboring tiles and choosing the lowest cost to evaluate more neighbors until the end is found and it backtracks through the lowest cost path to the start <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/>dijkstras provides a streamlined process to find the shortest path between the start and the end, however is slower than a* due to the lack of a heuristic to weed out unnecessary paths</p>
+                    )
+
+                  setCode(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dijkstras implementation</span> <br/><br/> copy and paste code</p>
                   )
+
                 }
 
                 else if (selection == "bellman"){
 
-                setText(
+                  setText(
 
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>bellman-ford</span> <br/>the bellman-ford algorithm goes through the entire maze and lists the cost of each tile by its distance from the start, after this it goes to the end and goes back to the start through the lowest cost path it took to get there<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> bellman-ford is the only algorithm listed that is able to find the shortest path of a graph that includes negative weights on account of exploring the lowest cost path to every tile </p>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>bellman-ford</span> <br/>the bellman-ford algorithm goes through the entire maze and lists the cost of each tile by its distance from the start, after this it goes to the end and goes back to the start through the lowest cost path it took to get there<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> bellman-ford is the only algorithm listed that is able to find the shortest path of a graph that includes negative weights on account of exploring the lowest cost path to every tile </p>
+                    )
+
+                  setCode(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>bellman implementation</span> <br/><br/> copy and paste code</p>
                   )
+
                 }
 
               }}>?</button>
@@ -2917,13 +2958,29 @@ function App() {
 
       <div id="info">
 
-          <p>{text}</p>
+          {text}
           <br/>
 
-          <p className="code">implementation can be seen in github (theres no space), maybe linked here some other time</p>
+          {/* <p className="code">implementation can be seen in github (theres no space), maybe linked here some other time</p> */}
+          <button id="implementation" onClick={()=>{
 
+            if (code == null){
+
+              return;
+            }
+
+            setVisibility(1);
+            console.log("set", visibility);
+          }}>implementation</button>
       </div>
 
+      <div id="codeContainer" style={{"opacity" : visibility}}>
+
+        <button id="close" onClick={()=>{setVisibility(0)}}>x</button>
+        {/* <p id="code" style={{"opacity" : visibility}}>{code}</p> */}
+        {code}
+
+      </div>
     </>
   )
 }
