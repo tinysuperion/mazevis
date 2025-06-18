@@ -1,6 +1,4 @@
 import { useState, useRef } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 
 //blah
 
@@ -176,7 +174,7 @@ let debounce = false;
 let pause = false;
 let ongoing = false;
 let skip = false;
-let setting = "";
+let setting = "start";
 
 let start = -1;
 let end = -1;
@@ -192,6 +190,7 @@ function App() {
 
   const [grid, setState] = useState(emptyGrid);
   const [position, setPosition] = useState(40);
+  const [text, setText] = useState("");
 
   const tileRef = useRef(new Array(17*17));
 
@@ -1425,11 +1424,11 @@ function App() {
             // console.log(Math.floor(position / newGrid.length), difference);
             // console.log(position % 17, ((lastPosition - position) % 17) / 2);
 
-            newGrid[Math.floor(position / newGrid.length)][position % newGrid.length] = 2;
+            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
             setState(newGrid.slice());
             await delay(delayTime);
 
-            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
+            newGrid[Math.floor(position / newGrid.length)][position % newGrid.length] = 2;
             setState(newGrid.slice());
             await delay(delayTime);
 
@@ -1831,6 +1830,7 @@ function App() {
 
             newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
             setState(newGrid.slice());
+            await delay(delayTime);
 
             newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
             setState(newGrid.slice());
@@ -2379,7 +2379,7 @@ function App() {
 
         <h1 id="title">MAZEVIS<br/></h1>
 
-        <p id="description">visualize maze generation and pathfinding algorithms</p>
+        <p id="description">visualize maze generation and pathfinding algorithms <span style={{fontSize : 8}}>(try clicking tiles to mark a start and an end for pathfinding)</span></p>
 
         <hr/>
 
@@ -2391,15 +2391,65 @@ function App() {
 
             <p>algorithm</p>
 
-            <select className="algorithmSelection" id="mazeGeneration">
+            <div className="selection">
 
-              <option className="option" value="dfs">depth first search</option>
-              <option className="option" value="prims">prims</option>
-              <option className="option" value="kruskals" >kruskals</option>
-              <option className="option" value="wilsons">wilsons</option>
-              <option className="option" value="alder">aldour-broder</option>
+              <select className="algorithmSelection" id="mazeGeneration">
 
-            </select>
+                <option className="option" value="dfs">depth first search</option>
+                <option className="option" value="prims">prims</option>
+                <option className="option" value="kruskals" >kruskals</option>
+                <option className="option" value="wilsons">wilsons</option>
+                <option className="option" value="alder">aldour-broder</option>
+
+              </select>
+
+              <button className="infoButton" onClick={()=>{
+
+                const selection = document.getElementById("mazeGeneration").value;
+
+                if (selection == "dfs"){
+                 
+                  setText(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search</span> <br/> from a randomly selected starting point a random neighboring tile is chosen, this step continues while saving each step in a stack until a deadend is reached when the algorithm backtracks until an available path is open at one of the previous steps. <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> depth-first search results in mazes with straight long halls and few branches </p>
+                  )
+                }
+
+                else if (selection == "prims"){
+
+                  setText(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>prims algorithm</span> <br/> prims selects a random tile to start. from the start all neighboring tiles are saved in an array and a random tile is chosen from all of the tiles available.<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> prims results in a minimal spanning tree, an edge-weighted tree that has no loops and has the minimum sum of edges (of course you dont have to assign all of the edges a weight, a random one can be selected for the same result for maze generation)</p>
+                  )
+                }
+
+                else if (selection == "wilsons"){
+
+                  setText(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>wilsons algorithm</span> <br/> wilsons algorithm makes use of a random walk starting from a random tile and starts with a randomly selected tile to be the initial maze. in the random walk it functions similarly to depth-first search until it forms a loop where it backtracks until it reaches the intersection ensuring it reaches the maze instead of blocking itself out. upon reaching a tile already in the maze it is added to the maze and a random walk begins at another randomly selected tile<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> wilsons algorithm results in a uniform distribution in mazes that isnt biased toward short dead ends or long corridors </p>
+                  )
+                }
+
+                else if (selection == "alder"){
+
+                  setText(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>aldous-broder algorithm</span> <br/> pick a random tile, then while there are unvisited tiles go to a random neighbor and if it hasn't yet been visited connect the two and continue at that neighbor. <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> aldous-broder results in one of the least efficient algorithms, however similarly to wilsons it also forms mazes that have a uniform distribution </p>
+                  )
+                }
+
+                else if (selection == "kruskals"){
+
+                  setText(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>kruskals algorithm</span> <br/> kruskals algorithm contains a list of all of the walls in the maze (these walls are the connections between tiles). then the walls are selected in a random order, if the tiles the wall connect belong to separate trees they are connected, otherwise they form a loop and the wall is skipped<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> kruskals algorithm produces a minimal spanning tree and a maze almost identical to prims with frequent branches and short deadends along with unique generation</p>
+                  )
+                } 
+
+              }}>?</button>
+
+            </div>
 
             <p>controls</p>
 
@@ -2456,13 +2506,8 @@ function App() {
                 
 
                 if (selection == "dfs"){
-                  
-                  // row = Math.round(Math.random()*8) * 2;
-                  // col = Math.round(Math.random()*8) * 2;
 
                   await dfs();
-
-                  // dfs(Math.round(Math.random()*16), Math.round(Math.random()*16));
                 }
 
                 else if (selection == "prims"){
@@ -2535,13 +2580,47 @@ function App() {
 
             <p>algorithm</p>
 
-            <select className="algorithmSelection" id="pathGeneration">
+            <div className="selection">
 
-              <option className="option" value="a" >a*</option>
-              <option className="option" value="dijkstras">dijkstras</option>
-              <option className="option" value="bellman">bellman-ford</option>
+              <select className="algorithmSelection" id="pathGeneration">
 
-            </select>
+                <option className="option" value="a" >a*</option>
+                <option className="option" value="dijkstras">dijkstras</option>
+                <option className="option" value="bellman">bellman-ford</option>
+
+              </select>
+
+              <button className="infoButton" onClick={()=>{
+
+                const selection = document.getElementById("pathGeneration").value;
+
+                if (selection == "a"){
+
+                setText(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>a*</span> <br/> a* uses a h cost representing the heuristic to guide and shear off routes by including an estimation of the distance to the end along with a g cost representing the distance traveled from the start. from the start the cost of all the neighboring tiles are calculated and the lowest cost is chosen to evaluate its neighbors, this continues until the end is found with the shortest path and it backtracks to the start <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> a* results in a quick algorithm to find the shortest path between some start and end goal by using a heuristic to cull unnecessary paths </p>
+                  )
+                }
+
+                else if (selection == "dijkstras"){
+
+                setText(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dijkstras</span> <br/> dijkstras algorithm similarly to a* uses a g cost representing the distance travelled, however dijkstras lacks any heuristic, the process followed is the same; evaluating the cost of neighboring tiles and choosing the lowest cost to evaluate more neighbors until the end is found and it backtracks through the lowest cost path to the start <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/>dijkstras provides a streamlined process to find the shortest path between the start and the end, however is slower than a* due to the lack of a heuristic to weed out unnecessary paths</p>
+                  )
+                }
+
+                else if (selection == "bellman"){
+
+                setText(
+
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>bellman-ford</span> <br/>the bellman-ford algorithm goes through the entire maze and lists the cost of each tile by its distance from the start, after this it goes to the end and goes back to the start through the lowest cost path it took to get there<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> bellman-ford is the only algorithm listed that is able to find the shortest path of a graph that includes negative weights on account of exploring the lowest cost path to every tile </p>
+                  )
+                }
+
+              }}>?</button>
+
+            </div>
 
             <p>controls</p>
 
@@ -2663,13 +2742,6 @@ function App() {
                 reset
               </button>
 
-              <button className="control" id="set" onClick={()=>{
-
-                setting = "start";
-              }}>
-                set
-              </button>
-
             </div>
 
           </div>
@@ -2681,9 +2753,6 @@ function App() {
             <input className="slider" id="delaySlider" type="range" min="0" max="500" step="10" defaultValue="50" onInput={async ()=>{
 
               const slider = document.getElementById("delaySlider");
-
-              slider.classList.add("opaque");
-
               delayTime = slider.value;
 
               const size = slider.offsetWidth;
@@ -2734,6 +2803,11 @@ function App() {
                 // weirdly enough col works but row doesnt, im not sure how these elements are separated from
                 // anything else, theres at least 17 elements with the same column for all columns
 
+                if (ongoing){
+
+                  return;
+                }
+
                 if (setting == "start" && row % 2 == 0 && col % 2 == 0){
 
                   if (start != -1){
@@ -2767,7 +2841,7 @@ function App() {
 
                   reference.current.textContent = setting;
                   reference.current.classList.add("marker");
-                  setting = "";
+                  setting = "start";
                 }
 
               }}></button>
@@ -2837,8 +2911,16 @@ function App() {
 
           return newRow;
 
-        })}
-      
+        })}        
+
+      </div>
+
+      <div id="info">
+
+          <p>{text}</p>
+          <br/>
+
+          <p className="code">implementation can be seen in github (theres no space), maybe linked here some other time</p>
 
       </div>
 
