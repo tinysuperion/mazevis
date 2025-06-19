@@ -13,7 +13,7 @@ function delay(time){
 
 }
 
-function aStar(){
+function aStar(row, col){
 
   // a star is basically
   // get the values of all the nodes surrounding some node

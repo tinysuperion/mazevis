@@ -13,7 +13,7 @@ function delay(time){
 
 }
 
-function kruskals(){
+function kruskals(row, col){
 
   const newGrid = grid;
 

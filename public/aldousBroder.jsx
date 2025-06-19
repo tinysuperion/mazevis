@@ -13,7 +13,7 @@ function delay(time){
 
 }
 
-function AldousBroder(){
+function AldousBroder(row, col){
 
   let available = [];
 

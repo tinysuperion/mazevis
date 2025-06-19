@@ -13,7 +13,7 @@ function delay(time){
 
 }
 
-function dijkstras(){
+function dijkstras(row, col){
 
   // basically a star except worse since theres no heuristic pruning
   // for some short path thats like a miles away

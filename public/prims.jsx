@@ -128,7 +128,7 @@ class heap{
   }
 }
 
-function prims(){
+function prims(row, col){
 
   let running = false;
 

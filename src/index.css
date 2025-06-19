@@ -166,12 +166,15 @@
   top: 3%;
   bottom: 3%;
 
-  padding: 10px;
-  padding-top: 40px;
+  padding: 1%;
+
+  margin: 0px;
+
   overflow: auto;
 
   background-color: #222222;
   color: white;
+  border-radius: 10px;
 
   pointer-events: none;
 }
@@ -179,9 +182,16 @@
 #close{
 
   box-sizing: content-box;
-  position: absolute;
-  top: 0px;
-  right: 0px;
+  position: fixed;
+  top: 4.88%;
+  right: 17.82%;
+
+  aspect-ratio: 1 / 1;
+
+  width: 2%;
+  padding: 0px;
+
+  transform: translate(-50%, -50%);
 
   color: white;
 
@@ -327,26 +337,6 @@
 .marker{
 
   background-color: rgb(255, 255, 100);
-}
-
-.left{
-
-  border-left-color: white;
-}
-
-.right{
-
-  border-right-color: white;
-}
-
-.top{
-
-  border-top-color: white;
-}
-
-.bottom{
-
-  border-bottom-color: white;
 }
 
 /* .click{

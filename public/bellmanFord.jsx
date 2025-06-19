@@ -13,7 +13,7 @@ function delay(time){
 
 }
 
-function bellman(){
+function bellman(row, col){
 
   let newGrid = grid;
   let origins = [];

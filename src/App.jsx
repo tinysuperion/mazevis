@@ -26,9 +26,6 @@ for (let row = 0; row < 17; row++){
 
 const direction = [-2, 2];
 
-let row = Math.round(Math.random()*8) * 2;
-let col = Math.round(Math.random()*8) * 2;
-
 // i have to implement my own heap datastructure so wahtever
 
 // class node{
@@ -168,6 +165,38 @@ class heap{
   }
 }
 
+function changeIndent(text, ratio){
+
+  const lines = text.split('\n');
+
+  const reformattedLines = lines.map((line) =>{
+
+    let index = 0;
+    let spaces = 0;
+
+    while (line[index] == ' ' || line[index] == '\t'){
+
+      if (line[index] == '\t'){
+
+        spaces += 4;
+      }
+      else{
+
+        spaces++;
+      }
+
+      index++;
+    }
+
+    const trimmed = line.trimStart();
+    const newIndent = ' '.repeat(spaces / ratio);
+
+    return newIndent + trimmed;
+  })
+
+  return reformattedLines.join("\n");
+}
+
 let debounce = false;
 
 let pause = false;
@@ -178,12 +207,12 @@ let setting = "start";
 let start = -1;
 let end = -1;
 
-let running = false;
-
 let displayNum = false;
 
 let delayTime = 50;
 let selection = "";
+
+let implementationRef;
 
 function App() {
 
@@ -192,6 +221,8 @@ function App() {
   const [text, setText] = useState();
   const [code, setCode] = useState();
   const [visibility, setVisibility] = useState();
+
+  const implementationRef = useRef(null);
 
   const tileRef = useRef(new Array(17*17));
 
@@ -230,19 +261,9 @@ function App() {
 
   }
   
-  function dfs(){
+  function dfs(row, col){
 
-    // usually row and col would be in the parameters but because
-    // i want to implement manual control of when to continue and going back through iterations
-    // so i need global variables
-
-    // for some reason goes in random directions and goes through tiles???
-
-    // console.log("start");
-
-    // let running = false;
-
-    running = false;
+    let running = false;
 
     let lastRow = -1;
     let lastCol = -1;
@@ -462,7 +483,7 @@ function App() {
 
   }
 
-  function AldousBroder(){
+  function AldousBroder(row, col){
 
     let available = [];
 
@@ -479,8 +500,7 @@ function App() {
     let lastRow = -1;
     let lastCol = -1;
 
-    // let running = false;
-    running = false;
+    let running = false;
 
     // const newGrid = grid;
     // weirdly const just means it cant be reassigned to a new array and i guess you cant alter size
@@ -625,7 +645,7 @@ function App() {
 
 
 
-  function prims(){
+  function prims(row, col){
 
     // implemented heap, probably, hopefully it works, its pretty basic
     // to implement a heap just create an array, for any index that index doubled + 1 or 2 is its child
@@ -634,8 +654,7 @@ function App() {
     // finished prims really easily, i havent tested it and i wont so ill save that for tomorrow or something
     // lots of time left in the day but this will probably be it
 
-    // let running = false;
-    running = false;
+    let running = false;
 
     const newGrid = grid;
     const minHeap = new heap();
@@ -744,7 +763,7 @@ function App() {
     })
   }
 
-  function kruskals(){
+  function kruskals(row, col){
 
     // basically just copy and paste prims but contain an array of all possible cells like wilson and alder
 
@@ -974,7 +993,7 @@ function App() {
   }
 
 
-  function wilsons(){
+  function wilsons(row, col){
 
     // basically dfs but start randomly and go until you hit another cell already in the maze, this makes it unbiased
 
@@ -1011,7 +1030,9 @@ function App() {
     row = Math.floor(cells[index] / 17);
     col = cells[index] % 17; 
 
-    running = false;
+    let path = [];
+
+    let running = false;
 
     return new Promise((done)=>{
 
@@ -1271,7 +1292,7 @@ function App() {
 
   }
 
-  function aStar(){
+  function aStar(row, col){
 
     // a star is basically
     // get the values of all the nodes surrounding some node
@@ -1323,8 +1344,7 @@ function App() {
     // the only reason i had costs were due to conflicts with grid, but if i just got through grid
     // and set all the values > or < 0 to 1 its all fine
 
-    // let running = false;
-    running = false;
+    let running = false;
 
     return new Promise((done)=>{
 
@@ -1674,7 +1694,7 @@ function App() {
     });
   }
 
-  function dijkstras(){
+  function dijkstras(row, col){
 
     // basically a star except worse since theres no heuristic pruning
     // for some short path thats like a miles away
@@ -1693,7 +1713,6 @@ function App() {
     minHeap.insert(current);
 
     const newGrid = grid;
-    // let costs = [];
     let origins = [];
 
     for (let row = 0; row < 17; row++){
@@ -1710,19 +1729,12 @@ function App() {
         }
 
       }
-
-      // costs.push(row_.slice());
       origins.push(row_.slice());
     }
 
     setState(newGrid.slice());
 
-    // let running = false;
-    running = false;
-
-    // NOTE 
-    // theres no need to store g cost, just use costs since the cost is just the distance from the start now
-    // tweak that later 
+    let running = false;
 
     return new Promise((done)=>{
 
@@ -2074,7 +2086,7 @@ function App() {
 
   }
 
-  function bellman(){
+  function bellman(row, col){
 
     // works with negatives
 
@@ -2109,8 +2121,7 @@ function App() {
 
     newGrid[start[0]][start[1]] = 0;
 
-    // let running = false;
-    running = false;
+    let running = false;
 
     let previous = -1;
 
@@ -2365,7 +2376,7 @@ function App() {
 
         <h1 id="title">MAZEVIS<br/></h1>
 
-        <p id="description">visualize maze generation and pathfinding algorithms <span style={{fontSize : 8}}>(try clicking tiles to mark a start and an end for pathfinding)</span></p>
+        <p id="description">visualize maze generation and pathfinding algorithms <span style={{fontSize : 9}}>(try clicking tiles to mark targets for pathfinding)</span></p>
 
         <hr/>
 
@@ -2400,19 +2411,24 @@ function App() {
                     <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search</span> <br/> from a randomly selected starting point a random neighboring tile is chosen, this step continues while saving each step in a stack until a dead-end is reached when the algorithm backtracks until an available path is open at one of the previous steps. <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> depth-first search results in mazes with straight long halls and few branches </p>
                   )
 
+                  const file = await fetch("dfs.jsx");
+                  const fileContent = await file.text();
+
+                  const formattedContent = changeIndent(fileContent, 2);
+
                   setCode(
 
                     // <p id="code" style={{"opacity" : visibility}}><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search implementation</span> <br/> copy and paste code</p>
                     // isnt updated when done like this for some reason
 
-                    // <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search implementation</span> <br/><br/>
-                    
-                    //   {fileContent}
-                    // </p>
                   <div>
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+                    <p style={{"fontSize": 14}}><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search implementation<br/>
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/dfs.jsx" target="_blank">implementation</a>
+                      </span><br/><br/>
 
-                    <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/dfs.jsx" target="_blank">implementation</a>
+                      {formattedContent}
+
+                    </p>
                   </div>
                   )
                 }
@@ -2424,12 +2440,21 @@ function App() {
                     <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>prims algorithm</span> <br/> prims selects a random tile to start. from the start all neighboring tiles are saved in an array and a random tile is chosen from all of the tiles available.<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> prims results in a minimal spanning tree, an edge-weighted tree that has no loops and has the minimum sum of edges (of course you dont have to assign all of the edges a weight, a random one can be selected for the same result for maze generation)</p>
                   )
 
+                  const file = await fetch("prims.jsx");
+                  const fileContent = await file.text();
+
+                  const formattedContent = changeIndent(fileContent, 2);
+
                   setCode(
 
                     <div>
-                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>prims implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>prims implementation<br/>
+                        <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/prims.jsx" target="_blank">implementation</a>
+                        </span> <br/><br/>
+                      
+                        {formattedContent}
 
-                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/prims.jsx" target="_blank">implementation</a>
+                      </p>
                     </div>
                   )
 
@@ -2442,12 +2467,21 @@ function App() {
                     <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>wilsons algorithm</span> <br/> wilsons algorithm makes use of a random walk starting from a random tile and starts with a randomly selected tile to be the initial maze. in the random walk it functions similarly to depth-first search until it forms a loop where it backtracks until it reaches the intersection ensuring it reaches the maze instead of blocking itself out. upon reaching a tile already in the maze it is added to the maze and a random walk begins at another randomly selected tile<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> wilsons algorithm results in a uniform distribution in mazes that isnt biased toward short dead ends or long corridors </p>
                   )
 
+                  const file = await fetch("wilsons.jsx");
+                  const fileContent = await file.text();
+
+                  const formattedContent = changeIndent(fileContent, 2);
+
                   setCode(
 
                     <div>
-                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>wilsons implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
-
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>wilsons implementation<br/>
                       <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/wilsons.jsx" target="_blank">implementation</a>
+                      </span><br/><br/>
+
+                        {formattedContent}
+
+                      </p>
                     </div>
                   )
 
@@ -2460,12 +2494,20 @@ function App() {
                     <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>aldous-broder algorithm</span> <br/> pick a random tile, then while there are unvisited tiles go to a random neighbor and if it hasn't yet been visited connect the two and continue at that neighbor. <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> aldous-broder results in one of the least efficient algorithms, however similarly to wilsons it also forms mazes that have a uniform distribution </p>
                   )
 
+                  const file = await fetch("aldousBroder.jsx");
+                  const fileContent = await file.text();
+
+                  const formattedContent = changeIndent(fileContent, 2);
+
                   setCode(
 
                     <div>
-                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>aldous-broder implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>aldous-broder implementation<br/>
+                        <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/aldousBroder.jsx" target="_blank">implementation</a>
+                        </span> <br/><br/>
 
-                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/aldousBroder.jsx" target="_blank">implementation</a>
+                        {formattedContent}
+                      </p>
                     </div>
                   )
 
@@ -2478,12 +2520,21 @@ function App() {
                     <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>kruskals algorithm</span> <br/> kruskals algorithm contains a list of all of the walls in the maze (these walls are the connections between tiles). then the walls are selected in a random order, if the tiles the wall connect belong to separate trees they are connected, otherwise they form a loop and the wall is skipped<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> kruskals algorithm produces a minimal spanning tree and a maze almost identical to prims with frequent branches and short dead-ends along with unique generation</p>
                   )
 
+                  const file = await fetch("kruskals.jsx");
+                  const fileContent = await file.text();
+
+                  const formattedContent = changeIndent(fileContent, 2);
+
                   setCode(
 
                   <div>
-                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>kruskals implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
+                    <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>kruskals implementation<br/>
+                     <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/kruskals.jsx" target="_blank">implementation</a>
+                     </span> <br/><br/>
+                    
+                      {formattedContent}
 
-                    <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/kruskals.jsx" target="_blank">implementation</a>
+                    </p>
                   </div>
                   )
 
@@ -2522,8 +2573,8 @@ function App() {
 
                 selection = document.getElementById("mazeGeneration").value;
 
-                row = Math.round(Math.random()*8) * 2;
-                col = Math.round(Math.random()*8) * 2;
+                let row = Math.round(Math.random()*8) * 2;
+                let col = Math.round(Math.random()*8) * 2;
 
                 displayNum = false;
 
@@ -2549,30 +2600,30 @@ function App() {
 
                 if (selection == "dfs"){
 
-                  await dfs();
+                  await dfs(row, col);
                 }
 
                 else if (selection == "prims"){
 
-                  await prims();
+                  await prims(row, col);
 
                 }
 
                 else if (selection == "wilsons"){
 
-                  await wilsons();
+                  await wilsons(row, col);
                 }
 
                 else if (selection == "alder"){
 
-                  await AldousBroder();
+                  await AldousBroder(row, col);
                 }
 
                 else if (selection == "kruskals"){
 
                   displayNum = true;
 
-                  await kruskals();
+                  await kruskals(row, col);
                 }
 
                 ongoing = false;
@@ -2632,7 +2683,7 @@ function App() {
 
               </select>
 
-              <button className="infoButton" onClick={()=>{
+              <button className="infoButton" onClick={async ()=>{
 
                 const selection = document.getElementById("pathGeneration").value;
 
@@ -2643,12 +2694,20 @@ function App() {
                       <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>a*</span> <br/> a* uses a h cost representing the heuristic to guide and shear off routes by including an estimation of the distance to the end along with a g cost representing the distance traveled from the start. from the start the cost of all the neighboring tiles are calculated and the lowest cost is chosen to evaluate its neighbors, this continues until the end is found with the shortest path and it backtracks to the start <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> a* results in a quick algorithm to find the shortest path between some start and end goal by using a heuristic to cull unnecessary paths </p>
                     )
 
+                  const file = await fetch("aStar.jsx");
+                  const fileContent = await file.text();
+
+                  const formattedContent = changeIndent(fileContent, 2);
+
                   setCode(
 
                     <div>
-                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>a* implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
-
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>a* implementation<br/>
                       <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/aStar.jsx" target="_blank">implementation</a>
+                      </span> <br/><br/>
+                      
+                        {formattedContent}
+                      </p>
                     </div>
                   )
 
@@ -2660,13 +2719,21 @@ function App() {
 
                       <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dijkstras</span> <br/> dijkstras algorithm similarly to a* uses a g cost representing the distance travelled, however dijkstras lacks any heuristic, the process followed is the same; evaluating the cost of neighboring tiles and choosing the lowest cost to evaluate more neighbors until the end is found and it backtracks through the lowest cost path to the start <br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/>dijkstras provides a streamlined process to find the shortest path between the start and the end, however is slower than a* due to the lack of a heuristic to weed out unnecessary paths</p>
                     )
+                    
+                  const file = await fetch("dijkstras.jsx");
+                  const fileContent = await file.text();
+
+                  const formattedContent = changeIndent(fileContent, 2);
 
                   setCode(
 
                     <div>
-                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dijkstras implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
-
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dijkstras implementation<br/>
                       <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/dijkstras.jsx" target="_blank">implementation</a>
+                      </span> <br/><br/>
+                      
+                        {formattedContent}
+                      </p>
                     </div>
                   )
 
@@ -2679,12 +2746,21 @@ function App() {
                       <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>bellman-ford</span> <br/>the bellman-ford algorithm goes through the entire maze and lists the cost of each tile by its distance from the start, after this it goes to the end and goes back to the start through the lowest cost path it took to get there<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> bellman-ford is the only algorithm listed that is able to find the shortest path of a graph that includes negative weights on account of exploring the lowest cost path to every tile </p>
                     )
 
+
+                  const file = await fetch("bellmanFord.jsx");
+                  const fileContent = await file.text();
+
+                  const formattedContent = changeIndent(fileContent, 2);
+
                   setCode(
 
                     <div>
-                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>bellman-ford implementation</span> <br/><br/>the code isnt here sadly, formatting the text would be really tedious</p>
-
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>bellman-ford implementation<br/>
                       <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/bellmanFord.jsx" target="_blank">implementation</a>
+                      </span> <br/><br/>
+                      
+                        {formattedContent}
+                      </p>
                     </div>
                   )
 
@@ -2749,24 +2825,24 @@ function App() {
 
                 selection = document.getElementById("pathGeneration").value;
 
-                row = Math.floor(start / grid.length);
-                col = start % grid.length;
+                let row = Math.floor(start / grid.length);
+                let col = start % grid.length;
 
                 displayNum = true;
 
                 if (selection == "a"){
 
-                  await aStar();
+                  await aStar(row, col);
                 }
 
                 else if (selection == "dijkstras"){
 
-                  await dijkstras();
+                  await dijkstras(row, col);
                 }
 
                 else if (selection == "bellman"){
 
-                  await bellman();
+                  await bellman(row, col);
                 }
 
                 ongoing = false;
@@ -3001,17 +3077,26 @@ function App() {
             }
 
             setVisibility(1);
+            implementationRef.current.style.pointerEvents = "all";
             console.log("set", visibility);
           }}>implementation</button>
       </div>
 
-      <div id="codeContainer" style={{"opacity" : visibility}}>
+      <pre id="codeContainer" style={{"opacity" : visibility}} ref={implementationRef}>
+        
+        <code>
 
-        <button id="close" onClick={()=>{setVisibility(0)}}>x</button>
-        {/* <p id="code" style={{"opacity" : visibility}}>{code}</p> */}
-        {code}
+          <button id="close" onClick={()=>{
+            setVisibility(0);
+            implementationRef.current.style.pointerEvents = "none";
+            
+            }}>x</button>
+            
+          {code}
 
-      </div>
+        </code>
+
+      </pre>
     </>
   )
 }

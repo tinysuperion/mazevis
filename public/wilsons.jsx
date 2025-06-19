@@ -13,7 +13,7 @@ function delay(time){
 
 }
 
-function wilsons(){
+function wilsons(row, col){
 
   const newGrid = grid;
 
