@@ -215,6 +215,21 @@ let selection = "";
 
 let implementationRef;
 
+function delay(time){
+
+  return new Promise((resolve)=>{
+
+    if ((skip || time == 0) && !reset){
+
+      resolve();
+      return;
+    }
+
+    setTimeout(resolve, time);
+  })
+
+}
+
 function App() {
 
   const [grid, setState] = useState(emptyGrid);
@@ -246,21 +261,6 @@ function App() {
   // pathfinding algorithms
   
   // console.log("run");
-
-  function delay(time){
-
-    return new Promise((resolve)=>{
-
-      if ((skip || time == 0) && !reset){
-
-        resolve();
-        return;
-      }
-
-      setTimeout(resolve, time);
-    })
-
-  }
   
   function dfs(row, col){
 
@@ -3265,6 +3265,60 @@ function App() {
                       </p>
                     </div>
                   )
+
+                }
+
+                else if (selection == "bfs"){
+
+                  setText(
+
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>breadth-first search</span> <br/>breadth-first search explores all paths equally starting from the origin by storing all of the neighbors in a queue and doing the same for all of the tiles in the queue</p>
+                    )
+
+
+                  const file = await fetch("bfs.jsx");
+                  const fileContent = await file.text();
+
+                  const formattedContent = changeIndent(fileContent, 2);
+
+                  setCode(
+
+                    <div>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>breadth-first search implementation<br/>
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/bellmanFord.jsx" target="_blank">implementation</a>
+                      </span> <br/><br/>
+                      
+                        {formattedContent}
+                      </p>
+                    </div>
+                  )                  
+
+                }
+
+                else if (selection == "deadEnd"){
+
+                  setText(
+
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dead-end filling</span> <br/>dead-end filling works as its name implies, the algorithm fills in all of the dead-ends in the maze until a junction which leaves only the path to the end left. this strategy meant to be used with a maze on paper</p>
+                    )
+
+
+                  const file = await fetch("deadEnd.jsx");
+                  const fileContent = await file.text();
+
+                  const formattedContent = changeIndent(fileContent, 2);
+
+                  setCode(
+
+                    <div>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dead-endimplementation<br/>
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/bellmanFord.jsx" target="_blank">implementation</a>
+                      </span> <br/><br/>
+                      
+                        {formattedContent}
+                      </p>
+                    </div>
+                  )                  
 
                 }
 

@@ -2,7 +2,7 @@ function delay(time){
 
   return new Promise((resolve)=>{
 
-    if (skip || time == 0){
+    if ((skip || time == 0) && !reset){
 
       resolve();
       return;
@@ -12,7 +12,6 @@ function delay(time){
   })
 
 }
-
 function dijkstras(row, col){
 
   // basically a star except worse since theres no heuristic pruning

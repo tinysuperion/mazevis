@@ -2,7 +2,7 @@ function delay(time){
 
   return new Promise((resolve)=>{
 
-    if (skip || time == 0){
+    if ((skip || time == 0) && !reset){
 
       resolve();
       return;
