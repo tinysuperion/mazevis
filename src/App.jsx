@@ -2916,7 +2916,7 @@ function App() {
 
                   <div>
                     <p style={{"fontSize": 14}}><span style={{"fontWeight" : 500, 'fontSize' : 18}}>depth-first search implementation<br/>
-                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/dfs.jsx" target="_blank">implementation</a>
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/public/dfs.jsx" target="_blank">implementation</a>
                       </span><br/><br/>
 
                       {formattedContent}
@@ -2942,7 +2942,7 @@ function App() {
 
                     <div>
                       <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>prims implementation<br/>
-                        <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/prims.jsx" target="_blank">implementation</a>
+                        <a href="https://github.com/tinysuperion/mazevis/blob/main/src/public/prims.jsx" target="_blank">implementation</a>
                         </span> <br/><br/>
                       
                         {formattedContent}
@@ -2969,7 +2969,7 @@ function App() {
 
                     <div>
                       <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>wilsons implementation<br/>
-                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/wilsons.jsx" target="_blank">implementation</a>
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/public/wilsons.jsx" target="_blank">implementation</a>
                       </span><br/><br/>
 
                         {formattedContent}
@@ -2996,7 +2996,7 @@ function App() {
 
                     <div>
                       <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>aldous-broder implementation<br/>
-                        <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/aldousBroder.jsx" target="_blank">implementation</a>
+                        <a href="https://github.com/tinysuperion/mazevis/blob/main/src/public/aldousBroder.jsx" target="_blank">implementation</a>
                         </span> <br/><br/>
 
                         {formattedContent}
@@ -3022,7 +3022,7 @@ function App() {
 
                   <div>
                     <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>kruskals implementation<br/>
-                     <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/kruskals.jsx" target="_blank">implementation</a>
+                     <a href="https://github.com/tinysuperion/mazevis/blob/main/src/public/kruskals.jsx" target="_blank">implementation</a>
                      </span> <br/><br/>
                     
                       {formattedContent}
@@ -3205,7 +3205,7 @@ function App() {
 
                     <div>
                       <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>a* implementation<br/>
-                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/aStar.jsx" target="_blank">implementation</a>
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/public/aStar.jsx" target="_blank">implementation</a>
                       </span> <br/><br/>
                       
                         {formattedContent}
@@ -3231,7 +3231,7 @@ function App() {
 
                     <div>
                       <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dijkstras implementation<br/>
-                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/dijkstras.jsx" target="_blank">implementation</a>
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/public/dijkstras.jsx" target="_blank">implementation</a>
                       </span> <br/><br/>
                       
                         {formattedContent}
@@ -3258,7 +3258,7 @@ function App() {
 
                     <div>
                       <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>bellman-ford implementation<br/>
-                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/bellmanFord.jsx" target="_blank">implementation</a>
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/public/bellmanFord.jsx" target="_blank">implementation</a>
                       </span> <br/><br/>
                       
                         {formattedContent}
@@ -3272,7 +3272,7 @@ function App() {
 
                   setText(
 
-                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>breadth-first search</span> <br/>breadth-first search explores all paths equally starting from the origin by storing all of the neighbors in a queue and doing the same for all of the tiles in the queue</p>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>breadth-first search</span> <br/>breadth-first search explores all paths equally starting from the origin by storing all of the neighbors in a queue and doing the same for all of the tiles in the queue<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> bfs is a simple way to find the shortest path to some end point by exploring all routes equally, although this results in a slow time</p>
                     )
 
 
@@ -3285,7 +3285,7 @@ function App() {
 
                     <div>
                       <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>breadth-first search implementation<br/>
-                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/bellmanFord.jsx" target="_blank">implementation</a>
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/public/bfs.jsx" target="_blank">implementation</a>
                       </span> <br/><br/>
                       
                         {formattedContent}
@@ -3299,7 +3299,7 @@ function App() {
 
                   setText(
 
-                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dead-end filling</span> <br/>dead-end filling works as its name implies, the algorithm fills in all of the dead-ends in the maze until a junction which leaves only the path to the end left. this strategy meant to be used with a maze on paper</p>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dead-end filling</span> <br/>dead-end filling works as its name implies, the algorithm fills in all of the dead-ends in the maze until a junction which leaves only the path to the end left. this strategy meant to be used with a maze on paper<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> dead-end filling results in relatively slow computation for finding all of the dead-ends and then filling them, however it is a reliable and efficient strategy for a traditional maze done on paper</p>
                     )
 
 
@@ -3311,8 +3311,8 @@ function App() {
                   setCode(
 
                     <div>
-                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dead-endimplementation<br/>
-                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/assets/bellmanFord.jsx" target="_blank">implementation</a>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dead-end implementation<br/>
+                      <a href="https://github.com/tinysuperion/mazevis/blob/main/src/public/deadEnd.jsx" target="_blank">implementation</a>
                       </span> <br/><br/>
                       
                         {formattedContent}
