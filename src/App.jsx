@@ -1327,10 +1327,10 @@ function App() {
 
         row_.push(-1);
         
-        if (newGrid[row][col] != 0){
-          // unitize
-          newGrid[row][col] = -1;
-        }
+        // if (newGrid[row][col] != 0){
+        //   // unitize
+        //   newGrid[row][col] = -1;
+        // }
 
       }
 
@@ -1723,10 +1723,10 @@ function App() {
 
         row_.push(-1);
         
-        if (newGrid[row][col] != 0){
-          // unitize
-          newGrid[row][col] = -1;
-        }
+        // if (newGrid[row][col] != 0){
+        //   // unitize
+        //   newGrid[row][col] = -1;
+        // }
 
       }
       origins.push(row_.slice());
@@ -2058,14 +2058,6 @@ function App() {
             lastPosition = position;
             position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
 
-            // if (position != -1){
-            //   // meaning its not the last vertex or node, meaning its not the start
-            //   newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
-            //   setState(newGrid.slice());
-            // }
-
-            // await delay(delayTime);
-
             debounce = false;
 
           }, 0);
@@ -2301,6 +2293,333 @@ function App() {
 
   }
 
+  function bfs(row, col){
+
+    let origins = [];
+
+    const newGrid = grid;
+
+    for (let row = 0; row < 17; row++){
+
+      let row_ = [];
+
+      for (let col = 0; col < 17; col++){
+
+        row_.push(-1);
+        
+        // if (newGrid[row][col] != 0){
+        //   // unitize
+        //   newGrid[row][col] = -1;
+        // }
+
+      }
+      origins.push(row_.slice());
+    }
+
+    newGrid[row][col] = -2;
+    setState(newGrid.slice());
+
+    let queue = [];
+    queue.push(row * newGrid.length + col);
+
+    let running = false;
+
+    return new Promise((done)=>{
+
+      const mainInterval = setInterval(async () => {
+        
+        if (running || pause){
+
+          return;
+        }
+
+        running = true;
+
+        let position = queue[0];
+        row = Math.floor(position / newGrid.length);
+        col = position % newGrid.length;
+        queue.shift();
+
+        if (row == end[0] && col == end[1]){
+
+          clearInterval(mainInterval);
+
+          let position = origins[end[0]][end[1]];
+          let lastPosition = end[0] * newGrid.length + end[1];
+
+          let debounce = false;
+
+          const highlightPath = setInterval(async () => {
+
+            if (debounce){
+
+              return;
+            }
+
+            debounce = true;
+            
+            if (position == -1){
+
+              console.log("highlighted path");
+
+              newGrid[start[0]][start[1]] = -1;
+              setState(newGrid.slice());
+
+              clearInterval(highlightPath);
+              done();
+              return;
+            }
+
+            let difference;
+
+            if (lastPosition - position > 0){
+
+              difference = Math.floor((lastPosition - position) / 17);
+            }
+            else{
+
+              difference = Math.ceil((lastPosition - position) / 17)
+            }
+
+            // console.log(Math.floor(position / newGrid.length), difference);
+            // console.log(position % 17, ((lastPosition - position) % 17) / 2);
+
+            newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
+
+            newGrid[Math.floor(position / newGrid.length)][position % newGrid.length] = 2;
+            setState(newGrid.slice());
+            await delay(delayTime);
+
+
+            lastPosition = position;
+            position = origins[Math.floor(position / newGrid.length)][position % newGrid.length];
+
+            debounce = false;
+
+          }, 0);
+
+        }
+
+        if (row-2 >= 0 && newGrid[row-1][col] != 0 && newGrid[row-2][col] != -2){
+
+          newGrid[row-1][col] = -2;
+          setState(newGrid.slice());
+          await delay(delayTime);
+
+          newGrid[row-2][col] = -2; // this difference in value just shows this tile has been since to cut off loops or redos
+          origins[row-2][col] = position;
+          queue.push(position - newGrid.length*2);
+          setState(newGrid.slice());
+          await delay(delayTime);
+        }
+
+        if (row+2 < newGrid.length && newGrid[row+1][col] != 0 && newGrid[row+2][col] != -2){
+
+          newGrid[row+1][col] = -2;
+          setState(newGrid.slice());
+          await delay(delayTime);
+
+          newGrid[row+2][col] = -2;
+          origins[row+2][col] = position;
+          queue.push(position + newGrid.length*2);
+          setState(newGrid.slice());
+          await delay(delayTime);
+        }
+
+        if (col-2 >= 0 && newGrid[row][col-1] != 0 && newGrid[row][col-2] != -2){
+
+          newGrid[row][col-1] = -2;
+          setState(newGrid.slice());
+          await delay(delayTime);
+
+          newGrid[row][col-2] = -2; 
+          origins[row][col-2] = position;
+          queue.push(position-2);
+          setState(newGrid.slice());
+
+          await delay(delayTime);
+        }
+
+        if (col+2 < newGrid.length && newGrid[row][col+1] != 0 && newGrid[row][col+2] != -2){
+
+          newGrid[row][col+1] = -2;
+          setState(newGrid.slice());
+          await delay(delayTime);
+
+          newGrid[row][col+2] = -2;
+          origins[row][col+2] = position;
+          queue.push(position+2);
+          setState(newGrid.slice());
+
+          await delay(delayTime);
+        }
+
+        running = false;
+
+      }, 0);
+
+
+    })
+
+  }
+
+  function deadEnd(row, col){
+
+    let running = false;
+
+    const newGrid = grid;
+
+    let deadEnds = [];
+
+    return new Promise(async (done)=>{
+
+    for (let row = 0; row < newGrid.length; row+=2){
+
+      for (let col = 0; col < newGrid.length; col+=2){
+
+        let connections = 0;
+
+        if (row-2 >= 0 && newGrid[row-1][col] == -1){
+
+          connections++;
+        }
+          
+        if (row+2 < newGrid.length && newGrid[row+1][col] == -1){
+
+
+          connections++;
+        }
+        
+        if(col-2 >= 0 && newGrid[row][col-1] == -1){
+
+          connections++;
+        }
+        
+        if(col+2 < newGrid.length && newGrid[row][col+1] == -1){
+
+          connections++;
+        }
+
+        if (connections == 1){
+
+          // dead-end, the only connection is the one leading into the dead-end
+
+          if ((row != start[0] || col != start[1]) && (row != end[0] || col != end[1])){
+
+            newGrid[row][col] = 2;
+            setState(newGrid.slice());
+
+            deadEnds.push(row * newGrid.length + col);
+
+          }
+        }
+
+      }
+
+    }
+
+    // i cant use a while loop or it freezes the site, and i cant set an interval as they could overlap
+    // and cause unexpected behavior, which isnt exactly so unexpected the information they have just probably wont be accurate
+    // instead ill just store the locations of dead-ends and go through them in the interval below
+
+    row = Math.floor(deadEnds[0] / newGrid.length);
+    col = deadEnds[0] % newGrid.length;
+
+    const fill = setInterval(async ()=>{
+
+      if (running || pause){
+
+        console.log("running");
+
+        return;
+      }
+      
+      console.log("continuing")
+
+      running = true;
+
+      let connections = 0;
+
+      let directionRow = 0;
+      let directionCol = 0;
+
+      if ((row-2) >= 0 && newGrid[row-1][col] == -1){
+
+        connections++;
+        directionRow = -2;
+      }
+        
+      if ((row+2) < newGrid.length && newGrid[row+1][col] == -1){
+
+        connections++;
+        directionRow = 2;
+      }
+      
+      if(col-2 >= 0 && newGrid[row][col-1] == -1){
+
+        connections++;
+        directionCol = -2;
+      }
+      
+      if((col+2) < newGrid.length && newGrid[row][col+1] == -1){
+
+        connections++;
+        directionCol = 2;
+      }
+
+      if (connections >= 2 || (row == start[0] && col == start[1] ) || (row == end[0] && col == end[1])){
+        // reached a junction (excluding the connection youve gone through)
+        // or if it reaches the start or end, if this occurs it obscures, takes over, or overrides the path
+        // to the end so it stops at that scenario aswell
+
+        // move onto the next deadend to fill
+
+        console.log("found junction");
+
+        deadEnds.shift();
+
+        if (deadEnds.length == 0){
+
+          clearInterval(fill);
+          done();
+          return;
+        }
+
+        row = Math.floor(deadEnds[0] / newGrid.length);
+        col = deadEnds[0] % newGrid.length;
+
+        running = false;
+
+        return;
+      }
+
+      newGrid[row][col] = 2;
+      setState(newGrid.slice());
+      await delay(delayTime);
+
+      newGrid[row + directionRow/2][col + directionCol/2] = 2;
+      setState(newGrid.slice());
+      await delay(delayTime)
+
+      row += directionRow;
+      col += directionCol;
+
+      running = false;
+
+    }, 0);
+
+    });
+
+  }
+
+  function tremaux(row, col){
+
+
+
+  }
+
   // debounce weird
   // i lied im the smartest person ever, not really i just figured that
   // the problem was because of the set state which rerenders the page, that means this function runs again
@@ -2392,7 +2711,7 @@ function App() {
 
               <select className="algorithmSelection" id="mazeGeneration">
 
-                <option className="option" value="dfs">depth first search</option>
+                <option className="option" value="dfs">depth-first search</option>
                 <option className="option" value="prims">prims</option>
                 <option className="option" value="kruskals" >kruskals</option>
                 <option className="option" value="wilsons">wilsons</option>
@@ -2680,6 +2999,8 @@ function App() {
                 <option className="option" value="a" >a*</option>
                 <option className="option" value="dijkstras">dijkstras</option>
                 <option className="option" value="bellman">bellman-ford</option>
+                <option className="option" value="bfs">breadth-first search</option>
+                <option className="option" value="deadEnd">dead-end filling</option>
 
               </select>
 
@@ -2814,6 +3135,11 @@ function App() {
 
                   for (let col = 0; col < newGrid.length; col++){
 
+                    if (newGrid[row][col] != 0){
+
+                      newGrid[row][col] = -1;
+                    }
+
                     if ((row == start[0] && col == start[1]) || (row == end[0] && col == end[1])){
 
                       continue;
@@ -2823,10 +3149,12 @@ function App() {
                   }
                 }
 
+                setState(newGrid.slice());
+
                 selection = document.getElementById("pathGeneration").value;
 
-                let row = Math.floor(start / grid.length);
-                let col = start % grid.length;
+                let row = start[0];
+                let col = start[1];
 
                 displayNum = true;
 
@@ -2843,6 +3171,16 @@ function App() {
                 else if (selection == "bellman"){
 
                   await bellman(row, col);
+                }
+
+                else if (selection == "bfs"){
+
+                  await bfs(row, col);
+                }
+
+                else if (selection == "deadEnd"){
+
+                  await deadEnd(row, col);
                 }
 
                 ongoing = false;
@@ -2870,7 +3208,7 @@ function App() {
 
                     if (newGrid[row][col] != 0){
 
-                      newGrid[row][col] = 1;
+                      newGrid[row][col] = -1;
                     }
 
                     if ((row != start[0] || col != start[1]) && (row != end[0] || col != end[1])){
@@ -3091,7 +3429,7 @@ function App() {
             implementationRef.current.style.pointerEvents = "none";
             
             }}>x</button>
-            
+
           {code}
 
         </code>

@@ -18,8 +18,6 @@ function dijkstras(row, col){
   // basically a star except worse since theres no heuristic pruning
   // for some short path thats like a miles away
 
-  // in fact i bet i can copy and paste the code and just delete a couple characters
-  // and itd be dijkstras, cool
 
   let minHeap = new heap();
   // reminder, in this heap it expects an array, first index is the weight, anything afterwards
@@ -32,7 +30,6 @@ function dijkstras(row, col){
   minHeap.insert(current);
 
   const newGrid = grid;
-  // let costs = [];
   let origins = [];
 
   for (let row = 0; row < 17; row++){
@@ -57,10 +54,6 @@ function dijkstras(row, col){
   setState(newGrid.slice());
 
   let running = false;
-
-  // NOTE 
-  // theres no need to store g cost, just use costs since the cost is just the distance from the start now
-  // tweak that later 
 
   return new Promise((done)=>{
 
@@ -103,7 +96,6 @@ function dijkstras(row, col){
       // which is if its currently empty or a more efficient path to it is available
 
       let cost = current[0] + 10;
-      // costs[row-2][col] = cost;
 
       minHeap.insert([cost, [row-2, col]]);
       origins[row-2][col] = row * grid.length + col;
@@ -111,8 +103,6 @@ function dijkstras(row, col){
       newGrid[row - 1][col] = current[0] + 5;
       setState(newGrid.slice());
       await delay(delayTime);
-
-      // console.log(current[2] + 1 + Math.abs(end[0] - (row - 1)) + Math.abs(end[1] - col));
 
       if (row-2 == end[0] && col == end[1]){
 
@@ -162,7 +152,6 @@ function dijkstras(row, col){
 
           lastPosition = position;
           position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
-          // await delay(delayTime);
 
           debounce = false;
 
@@ -180,7 +169,6 @@ function dijkstras(row, col){
     if ((row + 2) < newGrid.length && grid[row+1][col] != 0 && (row+2 != start[0] || col != start[1]) &&  (newGrid[row+2][col] == -1 || newGrid[row+2][col] > (current[0] + 10))){
 
       let cost = current[0] + 10;
-      // costs[row+2][col] = cost;
 
       minHeap.insert([cost, [row+2, col]]);
       origins[row+2][col] = row * grid.length + col;
@@ -236,8 +224,6 @@ function dijkstras(row, col){
 
           lastPosition = position;
           position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
-          // await delay(delayTime);
-
           debounce = false;
 
         }, 0);
@@ -253,7 +239,6 @@ function dijkstras(row, col){
     if ((col - 2) >= 0 && grid[row][col-1] != 0 && (row != start[0] || col-2 != start[1]) &&  (newGrid[row][col-2] == -1 || newGrid[row][col-2] > (current[0] + 10))){
 
       let cost = current[0] + 10;
-      // costs[row][col-2] = cost;
 
       minHeap.insert([cost, [row, col-2]]);
       origins[row][col-2] = row * grid.length + col;
@@ -309,7 +294,6 @@ function dijkstras(row, col){
 
           lastPosition = position;
           position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
-          // await delay(delayTime);
 
           debounce = false;
 
@@ -326,7 +310,6 @@ function dijkstras(row, col){
     if ((col + 2) < newGrid.length && grid[row][col+1] != 0 &&(row != start[0] || col+2 != start[1]) &&  (newGrid[row][col+2] == -1 || newGrid[row][col+2] > (current[0] + 10))){
 
       let cost = current[0] + 10;
-      // costs[row][col+2] = cost;
 
       minHeap.insert([cost, [row, col+2]]);
       origins[row][col+2] = row * grid.length + col;
@@ -382,15 +365,7 @@ function dijkstras(row, col){
           await delay(delayTime);
 
           lastPosition = position;
-          position = origins[Math.floor(position / newGrid.length)][position % newGrid.length]
-
-          // if (position != -1){
-          //   // meaning its not the last vertex or node, meaning its not the start
-          //   newGrid[Math.floor(lastPosition / newGrid.length)][lastPosition % newGrid.length] = 2;
-          //   setState(newGrid.slice());
-          // }
-
-          // await delay(delayTime);
+          position = origins[Math.floor(position / newGrid.length)][position % newGrid.length];
 
           debounce = false;
 
