@@ -202,6 +202,7 @@ let debounce = false;
 let pause = false;
 let ongoing = false;
 let skip = false;
+let reset = false;
 let setting = "start";
 
 let start = -1;
@@ -250,7 +251,7 @@ function App() {
 
     return new Promise((resolve)=>{
 
-      if (skip || time == 0){
+      if ((skip || time == 0) && !reset){
 
         resolve();
         return;
@@ -283,6 +284,14 @@ function App() {
         // console.log("still running");
         return;
         // end iteration if still processing last iteration
+      }
+
+      if (reset){
+
+        clearInterval(mainInterval);
+        done();
+        reset = false;
+        return;
       }
 
       running = true;
@@ -516,6 +525,14 @@ function App() {
         // end iteration if still processing last iteration
       }
 
+      if (reset){
+
+        clearInterval(mainInterval);
+        done();
+        reset = false;
+        return;
+      }
+
       running = true;
   
       let directionRow = 0;
@@ -668,6 +685,14 @@ function App() {
         return;
       }
 
+      if (reset){
+
+        clearInterval(mainInterval);
+        done();
+        reset = false;
+        return;
+      }
+
       running = true;
 
       newGrid[row][col] = 1;
@@ -813,6 +838,14 @@ function App() {
 
         console.log("running...");
         
+        return;
+      }
+
+      if (reset){
+
+        clearInterval(mainInterval);
+        done();
+        reset = false;
         return;
       }
 
@@ -1043,6 +1076,14 @@ function App() {
         return;
       }
 
+      if (reset){
+
+        clearInterval(mainInterval);
+        done()
+        reset = false;
+        return;
+      }
+
       if (cells.length == 0){
 
         console.log("finish");
@@ -1125,7 +1166,7 @@ function App() {
               let row_;
               let col_;
 
-              const promise = new Promise(async (resolve)=>{
+              const promise_ = new Promise(async (resolve)=>{
 
                 // i could instead repurpose row instead of making a new variable but given
                 // their different uses i think its easier to see doing this, besides i wouldnt have to
@@ -1137,6 +1178,15 @@ function App() {
 
                   if (debounce){
 
+                    return;
+                  }
+
+                  if (reset){
+
+                    clearInterval(mainInterval);
+                    clearInterval(wilsons);
+                    done()
+                    reset = false;
                     return;
                   }
 
@@ -1186,7 +1236,7 @@ function App() {
 
               })
 
-              await promise;
+              await promise_;
 
               row = row_;
               col = col_;
@@ -1355,6 +1405,14 @@ function App() {
         return;
       }
 
+      if (reset){
+
+        clearInterval(mainInterval);
+        done()
+        reset = false;
+        return;
+      }
+
       running = true;
 
       let current = minHeap.top();
@@ -1404,6 +1462,14 @@ function App() {
 
             if (debounce){
               
+              return;
+            }
+
+            if (reset){
+
+              clearInterval(highlightPath);
+              done()
+              reset = false;
               return;
             }
 
@@ -1486,6 +1552,14 @@ function App() {
               return;
             }
 
+            if (reset){
+
+              clearInterval(highlightPath);
+              done()
+              reset = false;
+              return;
+            }
+
             debounce = true;
             
             if (position == -1){
@@ -1564,6 +1638,14 @@ function App() {
               return;
             }
 
+            if (reset){
+
+              clearInterval(highlightPath);
+              done()
+              reset = false;
+              return;
+            }
+
             debounce = true;
             
             if (position == -1){
@@ -1638,6 +1720,14 @@ function App() {
 
             if (debounce){
 
+              return;
+            }
+
+            if (reset){
+
+              clearInterval(highlightPath);
+              done()
+              reset = false;
               return;
             }
 
@@ -1745,6 +1835,14 @@ function App() {
         return;
       }
 
+      if (reset){
+
+        clearInterval(mainInterval);
+        done()
+        reset = false;
+        return;
+      }
+
       running = true;
 
       if (row == end[0] && col == end[1]){
@@ -1803,6 +1901,14 @@ function App() {
 
             if (debounce){
 
+              return;
+            }
+
+            if (reset){
+
+              clearInterval(highlightPath);
+              done()
+              reset = false;
               return;
             }
 
@@ -1881,6 +1987,14 @@ function App() {
               return;
             }
 
+            if (reset){
+
+              clearInterval(highlightPath);
+              done()
+              reset = false;
+              return;
+            }
+
             debounce = true;
             
             if (position == -1){
@@ -1954,6 +2068,14 @@ function App() {
               return;
             }
 
+            if (reset){
+
+              clearInterval(highlightPath);
+              done()
+              reset = false;
+              return;
+            }
+
             debounce = true;
             
             if (position == -1){
@@ -2024,6 +2146,14 @@ function App() {
 
             if (debounce){
 
+              return;
+            }
+
+            if (reset){
+
+              clearInterval(highlightPath);
+              done()
+              reset = false;
               return;
             }
 
@@ -2123,6 +2253,14 @@ function App() {
 
       if (running || pause){
 
+        return;
+      }
+
+      if (reset){
+
+        clearInterval(mainInterval);
+        done()
+        reset = false;
         return;
       }
 
@@ -2234,6 +2372,14 @@ function App() {
             return;
           }
 
+          if (reset){
+
+            clearInterval(highlightPath);
+            done()
+            reset = false;
+            return;
+          }
+
           debounce = true;
           
           if (position == -1){
@@ -2306,11 +2452,6 @@ function App() {
       for (let col = 0; col < 17; col++){
 
         row_.push(-1);
-        
-        // if (newGrid[row][col] != 0){
-        //   // unitize
-        //   newGrid[row][col] = -1;
-        // }
 
       }
       origins.push(row_.slice());
@@ -2330,6 +2471,14 @@ function App() {
         
         if (running || pause){
 
+          return;
+        }
+
+        if (reset){
+
+          clearInterval(mainInterval);
+          done()
+          reset = false;
           return;
         }
 
@@ -2353,6 +2502,14 @@ function App() {
 
             if (debounce){
 
+              return;
+            }
+
+            if (reset){
+
+              clearInterval(highlightPath);
+              done()
+              reset = false;
               return;
             }
 
@@ -2475,6 +2632,10 @@ function App() {
 
     return new Promise(async (done)=>{
 
+    await delay(delayTime); 
+    // it ends up going fast enough that this occurs before the unitization occurs
+    // so they end up being these blue tiles with no number in them, so theres a delay here
+
     for (let row = 0; row < newGrid.length; row+=2){
 
       for (let col = 0; col < newGrid.length; col+=2){
@@ -2510,6 +2671,7 @@ function App() {
 
             newGrid[row][col] = 2;
             setState(newGrid.slice());
+            await delay(delayTime);
 
             deadEnds.push(row * newGrid.length + col);
 
@@ -2529,14 +2691,26 @@ function App() {
 
     const fill = setInterval(async ()=>{
 
-      if (running || pause){
+      if (reset){
 
-        console.log("running");
+        clearInterval(fill);
+        done()
+        reset = false;
+        return;
+      }
+
+      if (running || pause){
 
         return;
       }
-      
-      console.log("continuing")
+
+      if (reset){
+
+        clearInterval(mainInterval);
+        done();
+        reset = false;
+        return;
+      }
 
       running = true;
 
@@ -2960,9 +3134,16 @@ function App() {
                 skip
               </button>
 
-              <button className="control" onClick={()=>{
+              <button className="control" onClick={async ()=>{
 
                 let newGrid = grid;
+
+                if (ongoing){
+
+                  reset = true;
+                }
+
+                await delay(Math.max(delayTime*2, 50));
 
                 for (let row = 0; row < newGrid.length; row++){
 
@@ -3198,9 +3379,13 @@ function App() {
                 skip
               </button>
 
-              <button className="control" id="pathReset" onClick={()=>{
+              <button className="control" id="pathReset" onClick={async ()=>{
 
                 const newGrid = grid;
+
+                reset = true;
+
+                await delay(Math.max(delayTime*2, 50));
 
                 for (let row = 0; row < newGrid.length; row++){
 
