@@ -207,6 +207,32 @@
 
 }
 
+#pathHeader{
+
+  position: relative;
+  width: 80%;
+
+  padding-right: 16px;
+}
+
+#pathTitle{
+
+  display: inline;
+
+}
+
+#draw{
+  box-sizing: content-box;
+  position: absolute;
+
+  right: 0px;
+  height: 100%;
+  width: 20%;
+
+  border-style: solid;
+  border-radius: 2px;
+
+}
 
 .controls{
 
@@ -325,15 +351,36 @@
   padding: 0px;
 }
 
+.tile:hover{
+
+  background-color: lightgrey;
+
+}
+
+.tile:active{
+
+  background-color: grey;
+}
+
 .tileON{
 
   background-color: rgb(69, 255, 199);
 
 }
 
+.tileON:active{
+
+  background-color: rgb(61, 221, 173);
+}
+
 .tileALT{
 
   background-color: rgb(73, 197, 255);
+}
+
+.tileALT:active{
+
+  background-color: rgb(66, 177, 228);;
 }
 
 .marker{

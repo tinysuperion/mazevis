@@ -199,6 +199,10 @@ function changeIndent(text, ratio){
 
 let debounce = false;
 
+let drawing = false;
+let mouseDown = false;
+let button;
+
 let pause = false;
 let ongoing = false;
 let skip = false;
@@ -3167,12 +3171,55 @@ function App() {
 
           </div>
 
-          <p>pathfinding</p>
+          <div id="pathHeader">
+            <p id="pathTitle">pathfinding</p>
+            <button id="draw" onClick={async ()=>{
+
+              drawing = !drawing;
+
+              const drawButton = document.getElementById("draw");
+
+              if (drawing){
+
+                const newGrid = grid;
+
+                reset = true;
+
+                await delay(Math.max(delayTime*2, 50));
+
+                for (let row = 0; row < newGrid.length; row++){
+
+                  for (let col = 0; col < newGrid.length; col++){
+
+                    newGrid[row][col] = -1;
+                    
+                    if ((row != start[0] || col != start[1]) && (row != end[0] || col != end[1])){
+
+                      tiles[row * newGrid.length + col].current.textContent = "";
+                    }
+
+                  }
+
+                }
+
+                setState(newGrid.slice());
+
+                displayNum = false;
+
+                drawButton.textContent = "stop";
+              }
+              else{
+
+                drawButton.textContent = "draw";
+              }
+
+            }}>draw</button>
+          </div>
 
           <div className="algorithm">
-
+            
             <p>algorithm</p>
-
+              
             <div className="selection">
 
               <select className="algorithmSelection" id="pathGeneration">
@@ -3524,11 +3571,32 @@ function App() {
             newRow.push(
 
               // <button key = {ind} className="tile" ref={tileRef.current[index * grid.size + ind - 1]}></button>
-              <button key = {col} className="tile" ref={reference} tabIndex={-1} onClick={()=>{
+              <button key = {col} className="tile" ref={reference} tabIndex={-1} onMouseDown={(mouse)=>{
                 // weirdly enough col works but row doesnt, im not sure how these elements are separated from
                 // anything else, theres at least 17 elements with the same column for all columns
 
                 if (ongoing){
+
+                  return;
+                }
+
+                if (drawing){
+
+                  mouseDown = true;
+                  button = mouse.button;
+
+                  const newGrid = grid;
+
+                  if (button == 0){
+
+                    newGrid[row][col] = 0;
+                  }
+                  else if (button == 2 && !(row % 2 == 1 && col % 2 == 1)){
+
+                    newGrid[row][col] = -1;
+                  }
+
+                  setState(newGrid.slice());
 
                   return;
                 }
@@ -3567,6 +3635,32 @@ function App() {
                   reference.current.textContent = setting;
                   reference.current.classList.add("marker");
                   setting = "start";
+                }
+
+              }} onMouseUp={()=>{
+
+                if (drawing){
+
+                  mouseDown = false;
+                }
+
+              }} onMouseEnter={(mouse)=>{
+
+                if (mouseDown){
+
+                  const newGrid = grid;
+
+                  if (button == 0){
+
+                    newGrid[row][col] = 0;
+                  }
+                  else if (button == 2){
+
+                    newGrid[row][col] = -1;
+                  }
+
+                  setState(newGrid.slice());
+
                 }
 
               }}></button>
