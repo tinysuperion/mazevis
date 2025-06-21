@@ -2509,6 +2509,8 @@ function App() {
               return;
             }
 
+            debounce = true;
+
             if (reset){
 
               clearInterval(highlightPath);
@@ -2516,8 +2518,6 @@ function App() {
               reset = false;
               return;
             }
-
-            debounce = true;
             
             if (position == -1){
 
@@ -2561,6 +2561,7 @@ function App() {
 
           }, 0);
 
+          return;
         }
 
         if (row-2 >= 0 && newGrid[row-1][col] != 0 && newGrid[row-2][col] != -2){
@@ -3145,9 +3146,8 @@ function App() {
                 if (ongoing){
 
                   reset = true;
+                  await delay(Math.max(delayTime*2, 50));
                 }
-
-                await delay(Math.max(delayTime*2, 50));
 
                 for (let row = 0; row < newGrid.length; row++){
 
@@ -3484,9 +3484,12 @@ function App() {
 
                 const newGrid = grid;
 
-                reset = true;
+                if (ongoing){
 
-                await delay(Math.max(delayTime*2, 50));
+
+                  reset = true;
+                  await delay(Math.max(delayTime*4, 50));
+                }
 
                 for (let row = 0; row < newGrid.length; row++){
 
