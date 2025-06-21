@@ -3346,7 +3346,7 @@ function App() {
 
                   setText(
 
-                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dead-end filling</span> <br/>dead-end filling works as its name implies, the algorithm fills in all of the dead-ends in the maze until a junction which leaves only the path to the end left. this strategy meant to be used with a maze on paper<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> dead-end filling results in relatively slow computation for finding all of the dead-ends and then filling them, however it is a reliable and efficient strategy for a traditional maze done on paper</p>
+                      <p><span style={{"fontWeight" : 500, 'fontSize' : 18}}>dead-end filling</span> <br/>dead-end filling works as its name implies, the algorithm fills in all of the dead-ends in the maze until a junction is met which leaves only the path to the end left. this strategy meant to be used with a maze on paper<br/> <span style={{"fontWeight" : 500, 'fontSize' : 17}}>result</span> <br/> dead-end filling results in relatively slow computation for finding all of the dead-ends and then filling them, however it is a reliable and efficient strategy for a traditional maze done on paper</p>
                     )
 
 
