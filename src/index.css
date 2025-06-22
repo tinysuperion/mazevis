@@ -388,20 +388,6 @@
   background-color: rgb(255, 255, 100);
 }
 
-/* .click{
-
-  animation-name: pulse;
-  animation-timing-function: ease;
-  animation-duration: 0.1s;
-}
-
-@keyframes pulse{
-
-  33%{background-color:rgba(220, 220, 220, 0)}
-  66%{background-color: rgb(240, 240, 240)}
-  100%{background-color:rgba(220, 220, 220, 0)}
-} */
-
 p {
 
   text-align: left;
