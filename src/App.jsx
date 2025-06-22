@@ -2596,7 +2596,7 @@ function App() {
             </a>
         </div>
 
-        <p id="description"><br/>visualize maze generation and pathfinding algorithms <span style={{fontSize : 9}}>(try clicking tiles to mark targets for pathfinding)</span></p>
+        <p id="description">visualize maze generation and pathfinding algorithms <span style={{fontSize : 9}}>(try clicking tiles to mark targets for pathfinding)</span></p>
 
         <hr/>
 
