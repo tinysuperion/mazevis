@@ -28,7 +28,7 @@
 }
 
 #title{
-  color: black;
+  /* color: black; */
   font-size: 18px;
   font-weight: 600;
   display: inline;
@@ -454,6 +454,8 @@ button {
   cursor: pointer;
   transition: border-color 0.25s; */
 
+  background-color: #f9f9f9;
+
   box-sizing: content-box;
 }
 
@@ -487,10 +489,18 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
-  a:hover {
-    color: #747bff;
+}
+
+@media (prefers-color-scheme: dark){
+
+  .title{
+
+    color : white
   }
-  button {
-    background-color: #f9f9f9;
+
+  .tile{
+
+    background-color: white;
   }
+
 }

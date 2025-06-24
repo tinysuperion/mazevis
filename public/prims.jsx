@@ -56,8 +56,6 @@ class heap{
 
         // keep swapping or as long as the parent is greater
 
-        // console.log(`swap ${this.nodes[parent][0]} and ${value[0]}`);
-
         const storage = this.nodes[parent];
 
         this.nodes[parent] = value;
@@ -170,11 +168,6 @@ function prims(row, col){
       await minHeap.insert([Math.round(Math.random()*1000), [[row, col],[row, col+2]]]);
     }
 
-    // more awaits for popping wahtever awthever
-
-    // const minimum = minHeap.top();
-    // console.log(minimum);
-
     const boundsCheck = new Promise((resolve)=>{
 
       let debounce = false;
@@ -190,16 +183,12 @@ function prims(row, col){
         
         const minimum = minHeap.top();
 
-        // console.log(minimum);
-
         const origin = minimum[1][0];
         const destination = minimum[1][1];
 
         if (newGrid[destination[0]][destination[1]] == 0){
 
           clearInterval(validCheck);
-
-          // oops i have to contain 2 arrays, one for the orign second for destination
 
           newGrid[origin[0] + (destination[0] - origin[0])/2][origin[1] + (destination[1] - origin[1])/2] = 1;
           setState(newGrid.slice());

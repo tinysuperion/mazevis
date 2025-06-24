@@ -73,9 +73,7 @@ function bellman(row, col){
           await delay(delayTime);
 
           newGrid[row-2][col] = newGrid[row][col] + 10;
-          // setState(newGrid.slice());
           newGrid = newGrid.slice();
-          // }
 
           origins[row-2][col] = row * newGrid.length + col;
           setState(newGrid.slice());
@@ -84,16 +82,12 @@ function bellman(row, col){
 
         if (row+2 < newGrid.length && newGrid[row+1][col] != 0 && (newGrid[row+2][col] == -1 || newGrid[row+2][col] > newGrid[row][col] + 10)){
 
-          // if ((row+2 != start[0] || col != start[1]) && (row+2 != end[0] || col != end[1])){
-
           newGrid[row+1][col] = newGrid[row][col] + 5;
           setState(newGrid.slice());
           await delay(delayTime);
 
           newGrid[row+2][col] = newGrid[row][col] + 10;
-          // setState(newGrid.slice());
           newGrid = newGrid.slice();
-          // }
 
           origins[row+2][col] = row * newGrid.length + col;
           setState(newGrid.slice());
@@ -103,16 +97,12 @@ function bellman(row, col){
 
         if (col-2 >= 0 && newGrid[row][col-1] != 0 && (newGrid[row][col-2] == -1 || newGrid[row][col-2] > newGrid[row][col] + 10)){
 
-          // if ((row != start[0] || col-2 != start[1]) && (row != end[0] || col-2 != end[1])){
-
           newGrid[row][col-1] = newGrid[row][col] + 5;
           setState(newGrid.slice());
           await delay(delayTime);
 
           newGrid[row][col-2] = newGrid[row][col] + 10;
-          // setState(newGrid.slice());
           newGrid = newGrid.slice();
-          // }
 
           origins[row][col-2] = row * newGrid.length + col;
           setState(newGrid.slice());
@@ -122,16 +112,12 @@ function bellman(row, col){
 
         if (col+2 < newGrid.length && newGrid[row][col+1] != 0  && (newGrid[row][col+2] == -1 || newGrid[row][col+2] > newGrid[row][col] + 10)){
 
-          // if ((row != start[0] || col+2 != start[1]) && (row != end[0] || col+2 != end[1])){
-
           newGrid[row][col+1] = newGrid[row][col] + 5;
           setState(newGrid.slice());
           await delay(delayTime);
 
           newGrid[row][col+2] = newGrid[row][col] + 10;
-          // setState(newGrid.slice());
           newGrid = newGrid.slice();
-          // }
 
           origins[row][col+2] = row * newGrid.length + col;
           setState(newGrid.slice());
@@ -141,11 +127,6 @@ function bellman(row, col){
     }
 
     if (previous == newGrid){
-
-      console.log(previous);
-      console.log(newGrid);
-
-      console.log("finish");
 
       let position = origins[end[0]][end[1]];
       let lastPosition = end[0] * newGrid.length + end[1];
@@ -165,8 +146,6 @@ function bellman(row, col){
         
         if (position == -1){
 
-          console.log("highlighted path");
-
           newGrid[start[0]][start[1]] = -1;
           setState(newGrid.slice());
 
@@ -185,9 +164,6 @@ function bellman(row, col){
 
           difference = Math.ceil((lastPosition - position) / 17)
         }
-
-        // console.log(Math.floor(position / newGrid.length), difference);
-        // console.log(position % 17, ((lastPosition - position) % 17) / 2);
 
         newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
         setState(newGrid.slice());
