@@ -15,6 +15,21 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+}
+
+@media (prefers-color-scheme: dark){
+
+  .tile{
+
+    background-color: white;
+  }
+}
+
 #heading{
 
   display: flex;
@@ -486,19 +501,4 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-}
-
-@media (prefers-color-scheme: dark){
-
-  .tile{
-
-    background-color: white;
-  }
 }
