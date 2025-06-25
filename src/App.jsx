@@ -1217,6 +1217,7 @@ function App() {
         clearInterval(mainInterval);
         done()
         reset = false;
+        console.log("a reset")
         return;
       }
 
@@ -1229,6 +1230,7 @@ function App() {
 
         clearInterval(mainInterval);
         done();
+        console.log("this")
         return -1;
       }
 
@@ -1554,6 +1556,14 @@ function App() {
         newGrid[row][col+2] = cost;
         setState(newGrid.slice());
         await delay(delayTime);
+      }
+
+      if (minHeap.size == 0){
+
+        clearInterval(mainInterval);
+        done();
+        return;
+
       }
 
       running = false;
@@ -2816,7 +2826,6 @@ function App() {
                 }
 
                 setState(newGrid.slice());
-                
 
                 if (selection == "dfs"){
 
@@ -2908,6 +2917,8 @@ function App() {
                 reset = true;
 
                 await delay(Math.max(delayTime*2, 50));
+
+                reset = false;
 
                 for (let row = 0; row < newGrid.length; row++){
 
