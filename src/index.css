@@ -261,6 +261,8 @@
   border-style: solid;
   border-radius: 2px;
 
+  background-color: rgba(0,0,0,0);
+
 }
 
 .controls{
@@ -495,14 +497,8 @@ button:focus-visible {
 
 @media (prefers-color-scheme: dark){
 
-  .title{
-
-    color : white
-  }
-
   .tile{
 
     background-color: white;
   }
-
 }
