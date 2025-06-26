@@ -263,18 +263,19 @@ function App() {
 
     const mainInterval = setInterval(async ()=>{
 
+      if (reset){
+
+        clearInterval(mainInterval);
+        done()
+        reset = false;
+        pause = false;
+        return;
+      }
+
       if (running || pause){
 
         return;
         // end iteration if still processing last iteration
-      }
-
-      if (reset){
-
-        clearInterval(mainInterval);
-        done();
-        reset = false;
-        return;
       }
 
       running = true;
@@ -603,16 +604,17 @@ function App() {
 
     const mainInterval = setInterval(async ()=>{
 
-      if (running || pause){
-
-        return;
-      }
-
       if (reset){
 
         clearInterval(mainInterval);
-        done();
+        done()
         reset = false;
+        pause = false;
+        return;
+      }
+
+      if (running || pause){
+
         return;
       }
 
@@ -746,18 +748,19 @@ function App() {
         return;
       }
 
+      if (reset){
+
+        clearInterval(mainInterval);
+        done()
+        reset = false;
+        pause = false;
+        return;
+      }
+
       if (running || pause){
 
         console.log("running...");
         
-        return;
-      }
-
-      if (reset){
-
-        clearInterval(mainInterval);
-        done();
-        reset = false;
         return;
       }
 
@@ -949,16 +952,17 @@ function App() {
 
     const mainInterval = setInterval(async ()=>{
 
-      if (running || pause){
-
-        return;
-      }
-
       if (reset){
 
         clearInterval(mainInterval);
         done()
         reset = false;
+        pause = false;
+        return;
+      }
+
+      if (running || pause){
+
         return;
       }
 
@@ -1207,17 +1211,17 @@ function App() {
 
     const mainInterval = setInterval(async () => {
 
-      if (running || pause){
-
-        return;
-      }
-
       if (reset){
 
         clearInterval(mainInterval);
         done()
         reset = false;
-        console.log("a reset")
+        pause = false;
+        return;
+      }
+
+      if (running || pause){
+
         return;
       }
 
@@ -1607,16 +1611,17 @@ function App() {
 
     const mainInterval = setInterval(async () => {
 
-      if (running || pause){
-
-        return;
-      }
-
       if (reset){
 
         clearInterval(mainInterval);
         done()
         reset = false;
+        pause = false;
+        return;
+      }
+
+      if (running || pause){
+
         return;
       }
 
@@ -1968,7 +1973,11 @@ function App() {
 
   }
 
-  function bellman(row, col){
+  function bellman(){
+
+    // note, very likely to break in a drawn grid as it relies on 
+    // the fact the start is the only tile accessible that has a value of 0, which quickly isnt true
+    // when drawing wherever youd like
 
     let newGrid = grid;
     let origins = []; // stores the origin of the shortest path to a tile
@@ -2003,16 +2012,17 @@ function App() {
 
     const mainInterval = setInterval(async () => {
 
-      if (running || pause){
-
-        return;
-      }
-
       if (reset){
 
         clearInterval(mainInterval);
         done()
         reset = false;
+        pause = false;
+        return;
+      }
+
+      if (running || pause){
+
         return;
       }
 
@@ -2022,12 +2032,12 @@ function App() {
 
         for (let col = 0; col < grid.length; col+=2){
 
-          if (newGrid[row][col] == -1){
-            // empty
+          if (newGrid[row][col] == -1 || (newGrid[row][col] == 0 && (row != start[0] || col != start[1]))){
+            // empty, note theres extra code in this function to ensure it works with custom drawn obstacles
             continue;
           }
 
-          if (row-2 >= 0 && newGrid[row-1][col] != 0 && (newGrid[row-2][col] == -1 || newGrid[row-2][col] > newGrid[row][col] + 10)){
+          if (row-2 >= 0 && newGrid[row-1][col] != 0 && newGrid[row-2][col] != 0 && (newGrid[row-2][col] == -1 || newGrid[row-2][col] > newGrid[row][col] + 10)){
 
             newGrid[row-1][col] = newGrid[row][col] + 5;
             setState(newGrid.slice());
@@ -2041,7 +2051,7 @@ function App() {
             await delay(delayTime);
           }
 
-          if (row+2 < newGrid.length && newGrid[row+1][col] != 0 && (newGrid[row+2][col] == -1 || newGrid[row+2][col] > newGrid[row][col] + 10)){
+          if (row+2 < newGrid.length && newGrid[row+1][col] != 0 && newGrid[row+2][col] != 0 && (newGrid[row+2][col] == -1 || newGrid[row+2][col] > newGrid[row][col] + 10)){
 
             newGrid[row+1][col] = newGrid[row][col] + 5;
             setState(newGrid.slice());
@@ -2056,7 +2066,7 @@ function App() {
             await delay(delayTime);
           }
 
-          if (col-2 >= 0 && newGrid[row][col-1] != 0 && (newGrid[row][col-2] == -1 || newGrid[row][col-2] > newGrid[row][col] + 10)){
+          if (col-2 >= 0 && newGrid[row][col-1] != 0 && newGrid[row][col-2] != 0 && (newGrid[row][col-2] == -1 || newGrid[row][col-2] > newGrid[row][col] + 10)){
 
             newGrid[row][col-1] = newGrid[row][col] + 5;
             setState(newGrid.slice());
@@ -2071,7 +2081,7 @@ function App() {
             await delay(delayTime);
           }
 
-          if (col+2 < newGrid.length && newGrid[row][col+1] != 0  && (newGrid[row][col+2] == -1 || newGrid[row][col+2] > newGrid[row][col] + 10)){
+          if (col+2 < newGrid.length && newGrid[row][col+1] != 0 && newGrid[row][col+2] != 0  && (newGrid[row][col+2] == -1 || newGrid[row][col+2] > newGrid[row][col] + 10)){
 
             newGrid[row][col+1] = newGrid[row][col] + 5;
             setState(newGrid.slice());
@@ -2194,16 +2204,17 @@ function App() {
 
       const mainInterval = setInterval(async () => {
         
+      if (reset){
+
+        clearInterval(mainInterval);
+        done()
+        reset = false;
+        pause = false;
+        return;
+      }
+
         if (running || pause){
 
-          return;
-        }
-
-        if (reset){
-
-          clearInterval(mainInterval);
-          done()
-          reset = false;
           return;
         }
 
@@ -2285,7 +2296,7 @@ function App() {
           return;
         }
 
-        if (row-2 >= 0 && newGrid[row-1][col] != 0 && newGrid[row-2][col] != -2){
+        if (row-2 >= 0 && newGrid[row-1][col] != 0 && newGrid[row-2][col] != 0 && newGrid[row-2][col] != -2){
 
           newGrid[row-1][col] = -2;
           setState(newGrid.slice());
@@ -2298,7 +2309,7 @@ function App() {
           await delay(delayTime);
         }
 
-        if (row+2 < newGrid.length && newGrid[row+1][col] != 0 && newGrid[row+2][col] != -2){
+        if (row+2 < newGrid.length && newGrid[row+1][col] != 0 && newGrid[row+2][col] != 0 && newGrid[row+2][col] != -2){
 
           newGrid[row+1][col] = -2;
           setState(newGrid.slice());
@@ -2311,7 +2322,7 @@ function App() {
           await delay(delayTime);
         }
 
-        if (col-2 >= 0 && newGrid[row][col-1] != 0 && newGrid[row][col-2] != -2){
+        if (col-2 >= 0 && newGrid[row][col-1] != 0 && newGrid[row][col-2] != 0 && newGrid[row][col-2] != -2){
 
           newGrid[row][col-1] = -2;
           setState(newGrid.slice());
@@ -2325,7 +2336,7 @@ function App() {
           await delay(delayTime);
         }
 
-        if (col+2 < newGrid.length && newGrid[row][col+1] != 0 && newGrid[row][col+2] != -2){
+        if (col+2 < newGrid.length && newGrid[row][col+1] != 0 && newGrid[row][col+2] != 0 && newGrid[row][col+2] != -2){
 
           newGrid[row][col+1] = -2;
           setState(newGrid.slice());
@@ -2438,16 +2449,17 @@ function App() {
         return;
       }
 
-      if (running || pause){
-
-        return;
-      }
-
       if (reset){
 
         clearInterval(mainInterval);
-        done();
+        done()
         reset = false;
+        pause = false;
+        return;
+      }
+
+      if (running || pause){
+
         return;
       }
 
@@ -2524,11 +2536,6 @@ function App() {
     });
 
   }
-
-  // debounce weird
-  // i lied im the smartest person ever, not really i just figured that
-  // the problem was because of the set state which rerenders the page, that means this function runs again
-  // and debounce must be redeclared resetting the timer
 
   // manual progression below but ive decided to make it defunct, i dont think its needed just complicates
   // the site with more controls
@@ -3267,8 +3274,6 @@ function App() {
 
               const value = document.getElementById("value");
               value.textContent = delayTime
-              // value.style.opacity = 1;
-              // value.style.left = `${size * (value / 500)}px`;
               setPosition(25 + size * (delayTime / 550));
 
               console.log("size", size);
@@ -3291,22 +3296,10 @@ function App() {
 
           for (let col = 0; col < actualRow.length; col++){
 
-            // let tile = document.getElementById(index*10 + ind);
-
-            // if (tile != null && grid[index][ind] == 1){
-
-            //   tile.classList.add("tileON");
-
-            //   console.log(`switched row ${index} col ${ind}`)
-            // }
-
-            // using referencse instead, above doesnt work
-
             const reference = useRef(null);
 
             newRow.push(
 
-              // <button key = {ind} className="tile" ref={tileRef.current[index * grid.size + ind - 1]}></button>
               <button key = {col} className="tile" ref={reference} tabIndex={-1} onMouseDown={(mouse)=>{
                 // weirdly enough col works but row doesnt, im not sure how these elements are separated from
                 // anything else, theres at least 17 elements with the same column for all columns
@@ -3475,7 +3468,6 @@ function App() {
           {text}
           <br/>
 
-          {/* <p className="code">implementation can be seen in github (theres no space), maybe linked here some other time</p> */}
           <button id="implementation" onClick={()=>{
 
             if (code == null){
