@@ -3320,7 +3320,7 @@ function App() {
 
                     newGrid[row][col] = 0;
                   }
-                  else if (button == 2 && !(row % 2 == 1 && col % 2 == 1)){
+                  else if (button == 2){
 
                     newGrid[row][col] = -1;
                   }
