@@ -75,8 +75,6 @@ function kruskals(row, col){
 
     // check for connection
 
-    console.log(row, col);
-
     if (newGrid[row][col] < 0){
       // if a wall/tree already exists at this position nothing needs to be done sincee its already apart of it
       // im not sure if this is best practice but it works and its not hard to look at
@@ -142,7 +140,6 @@ function kruskals(row, col){
 
     if (newGrid[row][col] == newGrid[destinationRow][destinationCol]){
       // choose a new wall
-      console.log("new wall");
       running = false;
       return;
     }
@@ -169,7 +166,6 @@ function kruskals(row, col){
         console.log(position, row_, col_, row, col);
 
         newGrid[row_][col_] = newGrid[destinationRow][destinationCol];
-        // doesnt connect to eachother, just the vertex/node/tile/whatever
 
         copy.push(position);
       }
@@ -182,8 +178,6 @@ function kruskals(row, col){
       await delay(delayTime); 
     }
     else{
-
-      console.log("empty");
 
       let copy = trees.get(newGrid[row][col]);
       copy.push(destinationRow * 17 + destinationCol);

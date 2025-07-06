@@ -26,11 +26,6 @@ function bellman(row, col){
 
       row_.push(-1);
 
-      if (newGrid[row][col] != 0){
-
-        newGrid[row][col] = -1;
-      }
-
     }
 
     origins.push(row_);
@@ -65,8 +60,6 @@ function bellman(row, col){
         }
 
         if (row-2 >= 0 && newGrid[row-1][col] != 0 && (newGrid[row-2][col] == -1 || newGrid[row-2][col] > newGrid[row][col] + 10)){
-
-          // if ((row-2 != start[0] || col != start[1]) && (row-2 != end[0] || col != end[1])){
 
           newGrid[row-1][col] = newGrid[row][col] + 5;
           setState(newGrid.slice());
@@ -130,8 +123,6 @@ function bellman(row, col){
 
       let position = origins[end[0]][end[1]];
       let lastPosition = end[0] * newGrid.length + end[1];
-
-      console.log(position);
 
       let debounce = false;
 

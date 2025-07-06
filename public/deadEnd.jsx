@@ -141,8 +141,6 @@ function deadEnd(row, col){
 
       // move onto the next deadend to fill
 
-      console.log("found junction");
-
       deadEnds.shift();
 
       if (deadEnds.length == 0){

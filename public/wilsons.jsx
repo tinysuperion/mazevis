@@ -31,12 +31,8 @@ function wilsons(row, col){
 
   let index = Math.round(Math.random() * (cells.length-1));
 
-  console.log(index);
-
   row = Math.floor(cells[index] / 17);
   col = cells[index] % 17; 
-
-  console.log(row, col);
 
   newGrid[row][col] = 1;
   setState(newGrid.slice());
@@ -62,8 +58,6 @@ function wilsons(row, col){
     }
 
     if (cells.length == 0){
-
-      console.log("finish");
 
       clearInterval(mainInterval);
       done();
@@ -115,11 +109,7 @@ function wilsons(row, col){
             // this is the case where a loop is formed (when the value at this position is count)
             // this gets rid of the loop by starting where the loop was formed
 
-            // to implement just make a stack that backtracks until it reaches it
-
             debounce = true;
-
-            console.log("erasing loop");
 
             let lastRow = Math.floor(path[path.length-1] / 17);
             let lastCol = path[path.length-1] % 17;

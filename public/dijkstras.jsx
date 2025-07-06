@@ -14,10 +14,6 @@ function delay(time){
 }
 function dijkstras(row, col){
 
-  // basically a star except worse since theres no heuristic pruning
-  // for some short path thats like a miles away
-
-
   let minHeap = new heap();
   // reminder, in this heap it expects an array, first index is the weight, anything afterwards
   // can be whatever, but the entire array is returned with top
@@ -38,15 +34,9 @@ function dijkstras(row, col){
     for (let col = 0; col < 17; col++){
 
       row_.push(-1);
-      
-      if (newGrid[row][col] != 0){
-        // unitize
-        newGrid[row][col] = -1;
-      }
 
     }
 
-    // costs.push(row_.slice());
     origins.push(row_.slice());
   }
 
@@ -67,8 +57,6 @@ function dijkstras(row, col){
 
     if (row == end[0] && col == end[1]){
 
-      console.log("path finished");
-
       clearInterval(mainInterval);
       return;
     }
@@ -77,8 +65,6 @@ function dijkstras(row, col){
     minHeap.pop();
 
     if (current == -1){
-
-      console.log("no path");
 
       clearInterval(mainInterval);
       return -1;
@@ -104,8 +90,6 @@ function dijkstras(row, col){
       await delay(delayTime);
 
       if (row-2 == end[0] && col == end[1]){
-
-        console.log("path finished");
 
         clearInterval(mainInterval);
 
@@ -178,8 +162,6 @@ function dijkstras(row, col){
 
       if (row+2 == end[0] && col == end[1]){
 
-        console.log("path finished");
-
         clearInterval(mainInterval);
 
         let position = origins[end[0]][end[1]];
@@ -247,8 +229,6 @@ function dijkstras(row, col){
       await delay(delayTime);
 
       if (row == end[0] && col-2 == end[1]){
-
-        console.log("path finished");
 
         clearInterval(mainInterval);
 
@@ -318,8 +298,6 @@ function dijkstras(row, col){
       await delay(delayTime);
 
       if (row == end[0] && col+2 == end[1]){
-
-        console.log("path finished");
 
         clearInterval(mainInterval);
 

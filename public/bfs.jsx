@@ -91,8 +91,6 @@ function bfs(row, col){
           
           if (position == -1){
 
-            console.log("highlighted path");
-
             newGrid[start[0]][start[1]] = -1;
             setState(newGrid.slice());
 
@@ -111,9 +109,6 @@ function bfs(row, col){
 
             difference = Math.ceil((lastPosition - position) / 17)
           }
-
-          // console.log(Math.floor(position / newGrid.length), difference);
-          // console.log(position % 17, ((lastPosition - position) % 17) / 2);
 
           newGrid[Math.floor(position / newGrid.length) + difference / 2][position % 17 + ((lastPosition - position) % 17) / 2] = 2;
           setState(newGrid.slice());
