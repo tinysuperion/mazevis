@@ -1,16 +1,11 @@
 import { useState, useRef } from 'react'
 
-//blah
-
 let emptyGrid = [];
 
 let tiles = new Array(17*17);
 
-// oh i remember now
-// the references were so i could change the border to make it connect to other tiles and look seemless
-// ill do that later if i remember
-
-// i miss my type declarations, tiles contains references, lots of them, its all the tiles
+// the tiles were so i could change the border to make it connect to other tiles and look seemless
+// i never did that, but its there for altering the tiles content now
 
 for (let row = 0; row < 17; row++){
 
@@ -66,8 +61,6 @@ class heap{
 
     // change it later so that value is an array
     // with the weight and another array containing a position
-
-    // console.log("insert", value);
 
     return new Promise(async (resolve)=>{
 
